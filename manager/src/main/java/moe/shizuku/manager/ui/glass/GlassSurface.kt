@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -153,7 +154,7 @@ fun GlassBody(
 fun GlassCaption(
     text: String,
     modifier: Modifier = Modifier,
-    color: Color = LocalGlassPalette.current.textTertiary,
+    color: Color = LocalGlassPalette.current.textSecondary,
     maxLines: Int = Int.MAX_VALUE,
 ) {
     Text(text = text, modifier = modifier, style = GlassType.caption, color = color, maxLines = maxLines, overflow = TextOverflow.Ellipsis)
@@ -205,10 +206,16 @@ fun GlassButton(
     )
     val tint = when (style) {
         GlassButtonStyle.Glass -> palette.controlTint
-        GlassButtonStyle.Prominent -> palette.accent.copy(alpha = 0.82f)
-        GlassButtonStyle.Destructive -> palette.danger.copy(alpha = 0.82f)
+        GlassButtonStyle.Prominent -> palette.accent
+        GlassButtonStyle.Destructive -> palette.danger
     }
-    val contentColor = if (style == GlassButtonStyle.Glass) palette.textPrimary else Color.White
+    // Filled buttons keep a single accessible pairing: dark ink on the saturated
+    // fill in dark appearance, white ink on it in light appearance.
+    val contentColor = when {
+        style == GlassButtonStyle.Glass -> palette.textPrimary
+        palette.isDark -> Color(0xFF10151C)
+        else -> Color.White
+    }
     val shape = CircleShape
     Row(
         modifier = modifier
@@ -222,8 +229,8 @@ fun GlassButton(
             .liquidGlass(backdrop, shape, tint)
             .clip(shape)
             .clickable(interactionSource = interaction, indication = null, enabled = enabled, onClick = onClick)
-            .height(44.dp)
-            .padding(horizontal = 18.dp),
+            .height(48.dp)
+            .padding(horizontal = 20.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = if (fillWidth) Arrangement.Center else Arrangement.Start,
     ) {
@@ -231,7 +238,7 @@ fun GlassButton(
             GlassIcon(iconRes, size = 18, tint = contentColor)
             Spacer(Modifier.width(8.dp))
         }
-        Text(text = text, style = GlassType.caption, color = contentColor, maxLines = 1, overflow = TextOverflow.Ellipsis)
+        Text(text = text, style = GlassType.button, color = contentColor, maxLines = 1, overflow = TextOverflow.Ellipsis)
     }
 }
 
@@ -247,13 +254,19 @@ fun GlassIconButton(
     val palette = LocalGlassPalette.current
     Box(
         modifier = modifier
-            .size(size)
-            .liquidGlass(backdrop, CircleShape, tint)
+            .size(width = maxOf(size, 48.dp), height = maxOf(size, 48.dp))
             .clip(CircleShape)
             .clickable(onClick = onClick),
         contentAlignment = Alignment.Center,
     ) {
-        GlassIcon(iconRes, size = (size.value * 0.5f).toInt(), tint = palette.textPrimary)
+        Box(
+            modifier = Modifier
+                .size(size)
+                .liquidGlass(backdrop, CircleShape, tint),
+            contentAlignment = Alignment.Center,
+        ) {
+            GlassIcon(iconRes, size = (size.value * 0.5f).toInt(), tint = palette.textPrimary)
+        }
     }
 }
 
@@ -274,20 +287,26 @@ fun LiquidSwitch(
     )
     Box(
         modifier = modifier
-            .size(width = 52.dp, height = 32.dp)
-            .liquidGlass(backdrop, CircleShape, trackTint)
+            .size(width = 56.dp, height = 48.dp)
             .clip(CircleShape)
             .clickable(enabled = enabled) { onCheckedChange(!checked) },
-        contentAlignment = Alignment.CenterStart,
+        contentAlignment = Alignment.Center,
     ) {
         Box(
-            Modifier
-                .offset(x = thumbOffset)
-                .size(28.dp)
-                .shadow(4.dp, CircleShape, clip = false, ambientColor = palette.shadow, spotColor = palette.shadow)
-                .clip(CircleShape)
-                .background(Color.White.copy(alpha = 0.96f))
-        )
+            modifier = Modifier
+                .size(width = 52.dp, height = 32.dp)
+                .liquidGlass(backdrop, CircleShape, trackTint),
+            contentAlignment = Alignment.CenterStart,
+        ) {
+            Box(
+                Modifier
+                    .offset(x = thumbOffset)
+                    .size(28.dp)
+                    .shadow(4.dp, CircleShape, clip = false, ambientColor = palette.shadow, spotColor = palette.shadow)
+                    .clip(CircleShape)
+                    .background(Color.White.copy(alpha = 0.96f))
+            )
+        }
     }
 }
 
@@ -313,8 +332,9 @@ fun GlassRow(
     Row(
         modifier = modifier
             .fillMaxWidth()
+            .heightIn(min = 56.dp)
             .then(if (onClick != null) Modifier.clickable(enabled = enabled, onClick = onClick) else Modifier)
-            .padding(vertical = 12.dp),
+            .padding(vertical = 10.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         if (iconRes != null) {
@@ -340,7 +360,7 @@ fun GlassRow(
                 Text(
                     text = summary,
                     style = GlassType.caption,
-                    color = palette.textTertiary,
+                    color = palette.textSecondary,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
                 )

@@ -25,24 +25,26 @@ data class StaticGlassPalette(
 fun Context.staticGlassPalette(): StaticGlassPalette {
     val dark = (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) ==
             Configuration.UI_MODE_NIGHT_YES
+    // Dialogs are platform AlertDialog windows: they cannot blur the wallpaper, so
+    // they paint a near-opaque panel and lift the ink/label colours with it.
     return if (dark) StaticGlassPalette(
         dark = true,
-        card = 0x33FFFFFF.toInt(),
-        hairline = 0x40FFFFFF.toInt(),
-        primary = 0xFFF5F6FA.toInt(),
-        secondary = 0xC7E8EDF7.toInt(),
-        tertiary = 0x80E8EDF7.toInt(),
+        card = 0xF01A2030.toInt(),
+        hairline = 0x33FFFFFF.toInt(),
+        primary = 0xFFF7F9FC.toInt(),
+        secondary = 0xFFE3EAF4.toInt(),
+        tertiary = 0xFFB4C0D2.toInt(),
         accent = 0xFF30D158.toInt(),
         danger = 0xFFFF6961.toInt(),
     ) else StaticGlassPalette(
         dark = false,
-        card = 0x38FFFFFF.toInt(),
-        hairline = 0x66FFFFFF.toInt(),
-        primary = 0xFFFAFAFC.toInt(),
-        secondary = 0xCCFFFFFF.toInt(),
-        tertiary = 0x8AFFFFFF.toInt(),
-        accent = 0xFF34C759.toInt(),
-        danger = 0xFFFF453A.toInt(),
+        card = 0xF2FBFDFF.toInt(),
+        hairline = 0x1F0B1B33.toInt(),
+        primary = 0xFF0B1B2B.toInt(),
+        secondary = 0xFF22344A.toInt(),
+        tertiary = 0xFF3D5169.toInt(),
+        accent = 0xFF0B7A3B.toInt(),
+        danger = 0xFFB3261E.toInt(),
     )
 }
 
@@ -56,8 +58,9 @@ fun StaticGlassPalette.dialogBackground(context: Context): GradientDrawable {
 }
 
 fun Dialog.applyStaticGlassWindow() {
-    window?.setBackgroundDrawable(context.staticGlassPalette().dialogBackground(context))
-    window?.setDimAmount(0.55f)
+    val palette = context.staticGlassPalette()
+    window?.setBackgroundDrawable(palette.dialogBackground(context))
+    window?.setDimAmount(if (palette.dark) 0.6f else 0.42f)
 }
 
 fun Dialog.applyStaticGlassAlertStyle() {

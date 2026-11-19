@@ -69,7 +69,7 @@ fun GlassTopBar(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .height(58.dp)
+            .height(60.dp)
             .shadow(14.dp, CircleShape, clip = false, ambientColor = palette.shadow, spotColor = palette.shadow)
             .liquidGlass(backdrop, CircleShape, palette.barTint, blurRadius = 26.dp, refractionHeight = 8.dp)
             .padding(horizontal = 8.dp),
@@ -78,7 +78,7 @@ fun GlassTopBar(
         if (onBack != null) {
             Box(
                 Modifier
-                    .size(42.dp)
+                    .size(48.dp)
                     .clip(CircleShape)
                     .clickable(onClick = onBack),
                 contentAlignment = Alignment.Center,
@@ -100,7 +100,7 @@ fun GlassTopBar(
                 Text(
                     text = subtitle,
                     style = GlassType.caption,
-                    color = palette.textTertiary,
+                    color = palette.textSecondary,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
@@ -210,7 +210,7 @@ fun GlassSnackbarHost(
         ) {
             Text(
                 text = current.text,
-                style = GlassType.caption,
+                style = GlassType.body,
                 color = palette.textPrimary,
                 modifier = Modifier.weight(1f, fill = false),
             )
@@ -218,15 +218,15 @@ fun GlassSnackbarHost(
                 Spacer(Modifier.width(14.dp))
                 Text(
                     text = current.actionText,
-                    style = GlassType.caption,
+                    style = GlassType.button,
                     color = palette.accent,
                     modifier = Modifier
-                        .clip(RoundedCornerShape(10.dp))
+                        .clip(RoundedCornerShape(12.dp))
                         .clickable {
                             current.onAction.invoke()
                             current.onDismiss?.invoke()
                         }
-                        .padding(horizontal = 6.dp, vertical = 4.dp),
+                        .padding(horizontal = 10.dp, vertical = 10.dp),
                 )
             }
         }
@@ -246,7 +246,7 @@ fun GlassDialogOverlay(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(palette.scrim())
+            .background(palette.scrim)
             .clickable(interactionSource = remember { MutableInteractionSource() }, indication = null, onClick = onDismiss),
         contentAlignment = Alignment.Center,
     ) {
@@ -255,9 +255,9 @@ fun GlassDialogOverlay(
                 .padding(horizontal = 26.dp)
                 .fillMaxWidth()
                 .shadow(30.dp, RoundedCornerShape(28.dp), clip = false, ambientColor = palette.shadow, spotColor = palette.shadow)
-                .liquidGlass(backdrop, RoundedCornerShape(28.dp), palette.cardTint.copy(alpha = 0.55f), blurRadius = 30.dp)
+                .liquidGlass(backdrop, RoundedCornerShape(28.dp), palette.dialogTint, blurRadius = 34.dp)
                 .clickable(interactionSource = remember { MutableInteractionSource() }, indication = null) {}
-                .padding(22.dp),
+                .padding(24.dp),
             content = content,
         )
     }
@@ -313,5 +313,3 @@ fun GlassDialogActions(
         }
     }
 }
-
-private fun GlassPalette.scrim(): Color = if (isDark) Color.Black.copy(alpha = 0.45f) else Color(0xFF0B1B33).copy(alpha = 0.32f)

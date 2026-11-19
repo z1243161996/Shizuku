@@ -109,10 +109,11 @@ fun LiquidWallpaper(modifier: Modifier = Modifier) {
             )
         )
 
-        // top scrim keeps the white bar text legible against the pale upper edge
+        // dark appearance needs a top scrim behind the light bar text; the light
+        // appearance paints dark ink, so the pale upper edge already carries it
         drawRect(
             Brush.verticalGradient(
-                0f to Color.Black.copy(alpha = if (palette.isDark) 0.32f else 0.22f),
+                0f to Color.Black.copy(alpha = if (palette.isDark) 0.32f else 0f),
                 0.26f to Color.Transparent,
                 startY = 0f,
                 endY = size.height,
@@ -122,7 +123,7 @@ fun LiquidWallpaper(modifier: Modifier = Modifier) {
         // vignette so the glass edges have something to sit against
         drawRect(
             Brush.radialGradient(
-                colors = listOf(Color.Transparent, Color.Black.copy(alpha = if (palette.isDark) 0.55f else 0.22f)),
+                colors = listOf(Color.Transparent, Color.Black.copy(alpha = if (palette.isDark) 0.55f else 0.14f)),
                 center = Offset(size.width * 0.5f, size.height * 0.42f),
                 radius = size.maxDimension * 0.78f,
             )
