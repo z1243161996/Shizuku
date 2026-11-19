@@ -627,7 +627,7 @@ private fun CopyField(
     val palette = LocalGlassPalette.current
     Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
         Column(Modifier.weight(1f)) {
-            Text(label, style = GlassType.label, color = palette.textTertiary)
+            Text(label, style = GlassType.label, color = palette.textSecondary.copy(alpha = 0.85f))
             Spacer(Modifier.height(3.dp))
             Text(value, style = if (mono) GlassType.mono else GlassType.body, color = palette.textPrimary)
         }
