@@ -8,17 +8,17 @@ import androidx.compose.runtime.mutableStateOf
 import moe.shizuku.manager.Helps
 import moe.shizuku.manager.R
 import moe.shizuku.manager.authorization.AuthorizationManager
-import moe.shizuku.manager.ui.glass.GlassActivity
 import moe.shizuku.manager.ui.management.ManagementLimitedDialog
 import moe.shizuku.manager.ui.management.ManagementScreen
 import moe.shizuku.manager.ui.management.ManagementUiState
+import moe.shizuku.manager.ui.miuix.MiuixActivity
 import moe.shizuku.manager.utils.CustomTabsHelper
 import moe.shizuku.manager.utils.ShizukuStateMachine
 import rikka.lifecycle.Status
 import rikka.shizuku.Shizuku
 import java.util.Objects
 
-class ApplicationManagementActivity : GlassActivity() {
+class ApplicationManagementActivity : MiuixActivity() {
 
     private val viewModel: AppsViewModel by viewModels()
     private val uiState = mutableStateOf(ManagementUiState())
@@ -37,9 +37,8 @@ class ApplicationManagementActivity : GlassActivity() {
             return
         }
 
-        setGlassContent { backdrop ->
+        setMiuixContent {
             ManagementScreen(
-                backdrop = backdrop,
                 state = uiState,
                 dialog = dialogState.value,
                 onBack = { finish() },

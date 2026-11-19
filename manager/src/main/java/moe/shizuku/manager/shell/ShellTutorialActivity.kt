@@ -5,12 +5,12 @@ import android.os.Bundle
 import android.provider.DocumentsContract
 import androidx.activity.result.contract.ActivityResultContracts
 import moe.shizuku.manager.Helps
-import moe.shizuku.manager.ui.glass.GlassActivity
+import moe.shizuku.manager.ui.miuix.MiuixActivity
 import moe.shizuku.manager.ui.tutorials.ShellTutorialScreen
 import moe.shizuku.manager.utils.CustomTabsHelper
 import rikka.compatibility.DeviceCompatibility
 
-class ShellTutorialActivity : GlassActivity() {
+class ShellTutorialActivity : MiuixActivity() {
 
     companion object {
         private const val SH_NAME = "rish"
@@ -67,9 +67,8 @@ class ShellTutorialActivity : GlassActivity() {
         super.onCreate(savedInstanceState)
         val context = this
 
-        setGlassContent { backdrop ->
+        setMiuixContent {
             ShellTutorialScreen(
-                backdrop = backdrop,
                 shName = SH_NAME,
                 dexName = DEX_NAME,
                 isMiui = DeviceCompatibility.isMiui(),

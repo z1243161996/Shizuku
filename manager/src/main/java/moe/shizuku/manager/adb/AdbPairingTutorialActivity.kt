@@ -15,14 +15,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import moe.shizuku.manager.AppConstants
-import moe.shizuku.manager.ui.glass.GlassActivity
+import moe.shizuku.manager.ui.miuix.MiuixActivity
 import moe.shizuku.manager.ui.tutorials.AdbPairingTutorialScreen
 import moe.shizuku.manager.utils.SettingsHelper
 import moe.shizuku.manager.utils.SettingsPage
 import rikka.compatibility.DeviceCompatibility
 
 @RequiresApi(Build.VERSION_CODES.R)
-class AdbPairingTutorialActivity : GlassActivity() {
+class AdbPairingTutorialActivity : MiuixActivity() {
 
     private var notificationEnabled by mutableStateOf(false)
     private var isMiui by mutableStateOf(false)
@@ -38,9 +38,8 @@ class AdbPairingTutorialActivity : GlassActivity() {
             startPairingService()
         }
 
-        setGlassContent { backdrop ->
+        setMiuixContent {
             AdbPairingTutorialScreen(
-                backdrop = backdrop,
                 notificationEnabled = notificationEnabled,
                 isMiui = isMiui,
                 onBack = { finish() },

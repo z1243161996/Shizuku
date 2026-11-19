@@ -33,8 +33,8 @@ import moe.shizuku.manager.app.ThemeHelper
 import moe.shizuku.manager.ktx.toHtml
 import moe.shizuku.manager.receiver.NotifCancelReceiver
 import moe.shizuku.manager.receiver.ShizukuReceiverStarter
-import moe.shizuku.manager.ui.glass.GlassActivity
-import moe.shizuku.manager.ui.glass.GlassSnackbarMessage
+import moe.shizuku.manager.ui.miuix.MiuixActivity
+import moe.shizuku.manager.ui.miuix.MiuixSnackbarMessage
 import moe.shizuku.manager.ui.settings.LocaleOption
 import moe.shizuku.manager.ui.settings.SettingsAction
 import moe.shizuku.manager.ui.settings.SettingsDialog
@@ -51,10 +51,10 @@ import rikka.shizuku.manager.ShizukuLocales
 import java.util.Locale
 import kotlin.coroutines.resume
 
-class SettingsActivity : GlassActivity(), SharedPreferences.OnSharedPreferenceChangeListener {
+class SettingsActivity : MiuixActivity(), SharedPreferences.OnSharedPreferenceChangeListener {
 
     private val uiState = mutableStateOf(SettingsUiState())
-    private val snackbarState = mutableStateOf<GlassSnackbarMessage?>(null)
+    private val snackbarState = mutableStateOf<MiuixSnackbarMessage?>(null)
 
     private var pendingApply: (() -> Unit)? = null
     private var pendingRestartSetting: String? = null
@@ -74,9 +74,8 @@ class SettingsActivity : GlassActivity(), SharedPreferences.OnSharedPreferenceCh
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         uiState.value = buildUiState()
-        setGlassContent { backdrop ->
+        setMiuixContent {
             SettingsScreen(
-                backdrop = backdrop,
                 state = uiState.value,
                 languageOptions = buildLanguageOptions(),
                 snackbar = snackbarState.value,
@@ -346,7 +345,7 @@ class SettingsActivity : GlassActivity(), SharedPreferences.OnSharedPreferenceCh
             val accepted = suspendCancellableCoroutine<Boolean> { continuation ->
                 batteryContinuation = continuation
                 batteryActionTaken = false
-                snackbarState.value = GlassSnackbarMessage(
+                snackbarState.value = MiuixSnackbarMessage(
                     text = getString(R.string.snackbar_battery_optimization_settings),
                     actionText = getString(R.string.snackbar_action_fix),
                     onAction = {
@@ -495,7 +494,7 @@ class SettingsActivity : GlassActivity(), SharedPreferences.OnSharedPreferenceCh
     }
 
     private fun showSnackbar(text: String, actionText: String?, onAction: (() -> Unit)?) {
-        snackbarState.value = GlassSnackbarMessage(
+        snackbarState.value = MiuixSnackbarMessage(
             text = text,
             actionText = actionText,
             onAction = onAction,

@@ -23,8 +23,8 @@ import moe.shizuku.manager.shell.ShellTutorialActivity
 import moe.shizuku.manager.starter.Starter
 import moe.shizuku.manager.starter.StarterActivity
 import moe.shizuku.manager.stealth.StealthTutorialActivity
-import moe.shizuku.manager.ui.glass.GlassActivity
-import moe.shizuku.manager.ui.glass.GlassSnackbarMessage
+import moe.shizuku.manager.ui.miuix.MiuixActivity
+import moe.shizuku.manager.ui.miuix.MiuixSnackbarMessage
 import moe.shizuku.manager.ui.home.HomeAction
 import moe.shizuku.manager.ui.home.HomeExitDialog
 import moe.shizuku.manager.ui.home.HomeScreen
@@ -38,13 +38,13 @@ import moe.shizuku.manager.utils.UpdateHelper
 import rikka.lifecycle.Status
 import rikka.shizuku.Shizuku
 
-abstract class HomeActivity : GlassActivity() {
+abstract class HomeActivity : MiuixActivity() {
 
     private val homeModel: HomeViewModel by viewModels()
     private val appsModel: AppsViewModel by viewModels()
 
     private val uiState = mutableStateOf(HomeUiState())
-    private val snackbarState = mutableStateOf<GlassSnackbarMessage?>(null)
+    private val snackbarState = mutableStateOf<MiuixSnackbarMessage?>(null)
     private val exitDialogState = mutableStateOf<HomeExitDialog?>(null)
 
     private val stateListener: (ShizukuStateMachine.State) -> Unit = {
@@ -76,9 +76,8 @@ abstract class HomeActivity : GlassActivity() {
             )?.asImageBitmap(),
         )
 
-        setGlassContent { backdrop ->
+        setMiuixContent {
             HomeScreen(
-                backdrop = backdrop,
                 state = uiState.value,
                 snackbar = snackbarState.value,
                 exitDialog = exitDialogState.value,
@@ -151,7 +150,7 @@ abstract class HomeActivity : GlassActivity() {
     }
 
     private fun showSnackbar(text: String, actionText: String? = null, onAction: (() -> Unit)? = null) {
-        snackbarState.value = GlassSnackbarMessage(
+        snackbarState.value = MiuixSnackbarMessage(
             text = text,
             actionText = actionText,
             onAction = {

@@ -30,30 +30,55 @@ android {
     }
 }
 
-android.applicationVariants.all { variant ->
-    variant.outputs.all {
+import com.android.build.api.artifact.SingleArtifact
+
+androidComponents {
+    onVariants(selector().all()) { variant ->
+        def cap = variant.name.capitalize()
+        def versionName = rootProject.ext.versionName
         def outDir = new File(rootDir, "out")
         def mappingPath = new File(outDir, "mapping").absolutePath
         def dexPath = "${rootProject.rootDir.path}/manager/src/main/assets"
-        variant.assembleProvider.get().doLast {
-            if (variant.getBuildType().isMinifyEnabled()) {
-                copy {
-                    from variant.mappingFileProvider.get()
-                    into mappingPath
-                    rename { String fileName ->
-                        mappingPath + File.separator + "cmd-v${variant.versionName}.txt"
+        def apkProvider = variant.artifacts.get(SingleArtifact.APK.INSTANCE)
+        def mappingProvider = variant.artifacts.get(SingleArtifact.OBFUSCATION_MAPPING_FILE.INSTANCE)
+        def isRelease = variant.buildType == "release"
+
+        tasks.register("copyRishDex${cap}") {
+            inputs.files(apkProvider)
+            if (isRelease) {
+                inputs.files(mappingProvider)
+            }
+            doLast {
+                if (isRelease) {
+                    copy {
+                        from mappingProvider.get().asFile
+                        into mappingPath
+                        rename { "cmd-v${versionName}.txt" }
                     }
                 }
-            }
-            copy {
-                def file = zipTree(file(outputFile)).matching { include "classes*.dex" }.singleFile
-
-                from file
-                into dexPath
-                rename { String fileName ->
-                    fileName.replace(file.getName(), "rish_shizuku.dex")
+                def dexFiles = apkProvider.get().asFile.listFiles()
+                    .findAll { it.name.endsWith(".apk") }
+                    .collect { zipTree(it).matching { include "classes*.dex" }.files }
+                    .flatten() as List
+                if (dexFiles.size() != 1) {
+                    throw new GradleException("expected exactly one classes*.dex in shell APK, found ${dexFiles.size()}")
+                }
+                copy {
+                    from dexFiles.first()
+                    into dexPath
+                    rename { "rish_shizuku.dex" }
                 }
             }
+        }
+    }
+}
+
+afterEvaluate {
+    project.android.buildTypes.names.each { bt ->
+        def cap = bt.capitalize()
+        def copyDex = tasks.findByName("copyRishDex${cap}")
+        if (copyDex != null) {
+            tasks.named("assemble${cap}").configure { finalizedBy(copyDex) }
         }
     }
 }

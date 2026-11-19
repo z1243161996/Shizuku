@@ -1,21 +1,21 @@
 package moe.shizuku.manager.ui.settings
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Text
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -23,35 +23,32 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
-import com.kyant.backdrop.backdrops.LayerBackdrop
 import moe.shizuku.manager.R
-import moe.shizuku.manager.ui.glass.GlassButton
-import moe.shizuku.manager.ui.glass.GlassButtonStyle
-import moe.shizuku.manager.ui.glass.GlassCard
-import moe.shizuku.manager.ui.glass.GlassChevron
-import moe.shizuku.manager.ui.glass.GlassChevronDirection
-import moe.shizuku.manager.ui.glass.GlassChip
-import moe.shizuku.manager.ui.glass.GlassDialogActions
-import moe.shizuku.manager.ui.glass.GlassDialogOverlay
-import moe.shizuku.manager.ui.glass.GlassDialogText
-import moe.shizuku.manager.ui.glass.GlassDialogTitle
-import moe.shizuku.manager.ui.glass.GlassDivider
-import moe.shizuku.manager.ui.glass.GlassRow
-import moe.shizuku.manager.ui.glass.GlassScaffold
-import moe.shizuku.manager.ui.glass.GlassSnackbarHost
-import moe.shizuku.manager.ui.glass.GlassSnackbarMessage
-import moe.shizuku.manager.ui.glass.GlassType
-import moe.shizuku.manager.ui.glass.LiquidSwitch
-import moe.shizuku.manager.ui.glass.LocalGlassPalette
-import moe.shizuku.manager.ui.glass.liquidGlass
-import moe.shizuku.manager.ui.glass.stripHtml
+import moe.shizuku.manager.ui.miuix.MiuixGlassCard
+import moe.shizuku.manager.ui.miuix.MiuixSnackbarHost
+import moe.shizuku.manager.ui.miuix.MiuixSnackbarMessage
+import moe.shizuku.manager.ui.miuix.stripHtml
+import top.yukonga.miuix.kmp.basic.Button
+import top.yukonga.miuix.kmp.basic.ButtonDefaults
+import top.yukonga.miuix.kmp.basic.HorizontalDivider
+import top.yukonga.miuix.kmp.basic.Icon
+import top.yukonga.miuix.kmp.basic.IconButton
+import top.yukonga.miuix.kmp.basic.Scaffold
+import moe.shizuku.manager.ui.miuix.MiuixTopBar
+import top.yukonga.miuix.kmp.basic.Switch
+import top.yukonga.miuix.kmp.basic.Text
+import top.yukonga.miuix.kmp.basic.TextButton
+import top.yukonga.miuix.kmp.overlay.OverlayDialog
+import top.yukonga.miuix.kmp.theme.MiuixTheme
 
 enum class SettingsDialog {
     None,
@@ -137,133 +134,164 @@ private data class DialogOption(
 
 @Composable
 fun SettingsScreen(
-    backdrop: LayerBackdrop,
     state: SettingsUiState,
     languageOptions: List<LocaleOption>,
-    snackbar: GlassSnackbarMessage?,
+    snackbar: MiuixSnackbarMessage?,
     onAction: (SettingsAction) -> Unit,
 ) {
-    GlassScaffold(
-        title = stringResource(R.string.settings_title),
-        backdrop = backdrop,
-        onBack = { onAction(SettingsAction.Back) },
-        floating = { GlassSnackbarHost(snackbar, backdrop) },
-    ) {
-        Spacer(Modifier.height(6.dp))
-        SectionLabel(stringResource(R.string.settings_behavior))
-        Spacer(Modifier.height(10.dp))
-        BehaviorCard(backdrop, state, onAction)
+    val colors = MiuixTheme.colorScheme
 
-        Spacer(Modifier.height(22.dp))
-        SectionLabel(stringResource(R.string.settings_language))
-        Spacer(Modifier.height(10.dp))
-        LanguageCard(backdrop, state, onAction)
-
-        Spacer(Modifier.height(22.dp))
-        SectionLabel(stringResource(R.string.settings_user_interface))
-        Spacer(Modifier.height(10.dp))
-        AppearanceCard(backdrop, state, onAction)
-
-        Spacer(Modifier.height(22.dp))
-        SectionLabel(stringResource(R.string.settings_support))
-        Spacer(Modifier.height(10.dp))
-        SupportCard(backdrop, state, onAction)
-
-        if (state.legacyPairingVisible) {
-            Spacer(Modifier.height(22.dp))
-            SectionLabel(stringResource(R.string.settings_advanced))
+    Scaffold(
+        topBar = {
+            MiuixTopBar(
+                title = stringResource(R.string.settings_title),
+                color = colors.surface.copy(alpha = 0.55f),
+                navigationIcon = {
+                    IconButton(onClick = { onAction(SettingsAction.Back) }) {
+                        Icon(
+                            painterResource(R.drawable.ic_outline_arrow_upward_24),
+                            null,
+                            Modifier.rotate(-90f),
+                            tint = colors.onSurface,
+                        )
+                    }
+                },
+            )
+        },
+        snackbarHost = { MiuixSnackbarHost(snackbar, Modifier.fillMaxWidth()) },
+        containerColor = Color.Transparent,
+    ) { padding ->
+        Column(
+            Modifier
+                .fillMaxSize()
+                .padding(padding)
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 16.dp)
+        ) {
+            Spacer(Modifier.height(6.dp))
+            SectionLabel(stringResource(R.string.settings_behavior))
             Spacer(Modifier.height(10.dp))
-            AdvancedCard(backdrop, state, onAction)
+            BehaviorCard(state, onAction)
+
+            Spacer(Modifier.height(22.dp))
+            SectionLabel(stringResource(R.string.settings_language))
+            Spacer(Modifier.height(10.dp))
+            LanguageCard(state, onAction)
+
+            Spacer(Modifier.height(22.dp))
+            SectionLabel(stringResource(R.string.settings_user_interface))
+            Spacer(Modifier.height(10.dp))
+            AppearanceCard(state, onAction)
+
+            Spacer(Modifier.height(22.dp))
+            SectionLabel(stringResource(R.string.settings_support))
+            Spacer(Modifier.height(10.dp))
+            SupportCard(state, onAction)
+
+            if (state.legacyPairingVisible) {
+                Spacer(Modifier.height(22.dp))
+                SectionLabel(stringResource(R.string.settings_advanced))
+                Spacer(Modifier.height(10.dp))
+                AdvancedCard(state, onAction)
+            }
+
+            Spacer(Modifier.height(18.dp))
         }
 
-        Spacer(Modifier.height(18.dp))
-    }
-
-    when (state.dialog) {
-        SettingsDialog.None -> Unit
-        SettingsDialog.StartOnBootBug -> ConfirmDialog(
-            backdrop = backdrop,
-            message = stringResource(R.string.settings_start_on_boot_bug).stripHtml(),
-            onConfirm = { onAction(SettingsAction.DialogConfirmed) },
-            onCancel = { onAction(SettingsAction.DialogCancelled) },
-        )
-        SettingsDialog.StopTcp -> ConfirmDialog(
-            backdrop = backdrop,
-            message = stringResource(R.string.settings_tcp_mode_dialog_close_port).stripHtml(),
-            onConfirm = { onAction(SettingsAction.DialogConfirmed) },
-            onCancel = { onAction(SettingsAction.DialogCancelled) },
-        )
-        SettingsDialog.RestartTcpMode -> ConfirmDialog(
-            backdrop = backdrop,
-            title = stringResource(R.string.settings_restart_dialog_title),
-            message = (stringResource(R.string.settings_restart_dialog_message) +
-                    stringResource(R.string.settings_restart_dialog_message_wifi_required)).stripHtml(),
-            onConfirm = { onAction(SettingsAction.DialogConfirmed) },
-            onCancel = { onAction(SettingsAction.DialogCancelled) },
-        )
-        SettingsDialog.RestartTcpPort -> ConfirmDialog(
-            backdrop = backdrop,
-            title = stringResource(R.string.settings_restart_dialog_title),
-            message = stringResource(R.string.settings_restart_dialog_message).stripHtml(),
-            onConfirm = { onAction(SettingsAction.DialogConfirmed) },
-            onCancel = { onAction(SettingsAction.DialogCancelled) },
-        )
-        SettingsDialog.TcpPort -> TcpPortDialog(
-            backdrop = backdrop,
-            initial = state.tcpPortValue,
-            onConfirm = { onAction(SettingsAction.TcpPortSubmitted(it)) },
-            onCancel = { onAction(SettingsAction.DialogCancelled) },
-        )
-        SettingsDialog.Language -> ListDialog(
-            backdrop = backdrop,
-            title = stringResource(R.string.settings_language),
-            options = languageOptions.map { DialogOption(it.tag, it.nativeName, it.localizedName) },
-            selectedTag = state.languageTag,
-            onSelect = { onAction(SettingsAction.LanguageSelected(it)) },
-            onDismiss = { onAction(SettingsAction.DialogDismissed) },
-        )
-        SettingsDialog.NightMode -> ListDialog(
-            backdrop = backdrop,
-            title = stringResource(R.string.dark_theme),
-            options = listOf(
-                DialogOption("1", stringResource(R.string.dark_theme_off)),
-                DialogOption("2", stringResource(R.string.dark_theme_on)),
-                DialogOption("-1", stringResource(R.string.follow_system)),
-            ),
-            selectedTag = state.nightMode.toString(),
-            onSelect = { onAction(SettingsAction.NightModeSelected(it.toInt())) },
-            onDismiss = { onAction(SettingsAction.DialogDismissed) },
-        )
-        SettingsDialog.UpdateMode -> ListDialog(
-            backdrop = backdrop,
-            title = stringResource(R.string.check_for_updates),
-            options = listOf(
-                DialogOption("0", stringResource(R.string.off)),
-                DialogOption("1", stringResource(R.string.settings_update_stable)),
-                DialogOption("2", stringResource(R.string.settings_update_beta)),
-            ),
-            selectedTag = state.updateMode.toString(),
-            onSelect = { onAction(SettingsAction.UpdateModeSelected(it.toInt())) },
-            onDismiss = { onAction(SettingsAction.DialogDismissed) },
-        )
-        SettingsDialog.BugReport -> BugReportDialog(backdrop, onAction)
+        when (state.dialog) {
+            SettingsDialog.None -> Unit
+            SettingsDialog.StartOnBootBug -> ConfirmDialog(
+                message = stringResource(R.string.settings_start_on_boot_bug).stripHtml(),
+                onConfirm = { onAction(SettingsAction.DialogConfirmed) },
+                onCancel = { onAction(SettingsAction.DialogCancelled) },
+            )
+            SettingsDialog.StopTcp -> ConfirmDialog(
+                message = stringResource(R.string.settings_tcp_mode_dialog_close_port).stripHtml(),
+                onConfirm = { onAction(SettingsAction.DialogConfirmed) },
+                onCancel = { onAction(SettingsAction.DialogCancelled) },
+            )
+            SettingsDialog.RestartTcpMode -> ConfirmDialog(
+                title = stringResource(R.string.settings_restart_dialog_title),
+                message = (stringResource(R.string.settings_restart_dialog_message) +
+                        stringResource(R.string.settings_restart_dialog_message_wifi_required)).stripHtml(),
+                onConfirm = { onAction(SettingsAction.DialogConfirmed) },
+                onCancel = { onAction(SettingsAction.DialogCancelled) },
+            )
+            SettingsDialog.RestartTcpPort -> ConfirmDialog(
+                title = stringResource(R.string.settings_restart_dialog_title),
+                message = stringResource(R.string.settings_restart_dialog_message).stripHtml(),
+                onConfirm = { onAction(SettingsAction.DialogConfirmed) },
+                onCancel = { onAction(SettingsAction.DialogCancelled) },
+            )
+            SettingsDialog.TcpPort -> TcpPortDialog(
+                initial = state.tcpPortValue,
+                onConfirm = { onAction(SettingsAction.TcpPortSubmitted(it)) },
+                onCancel = { onAction(SettingsAction.DialogCancelled) },
+            )
+            SettingsDialog.Language -> ListDialog(
+                title = stringResource(R.string.settings_language),
+                options = languageOptions.map { DialogOption(it.tag, it.nativeName, it.localizedName) },
+                selectedTag = state.languageTag,
+                onSelect = { onAction(SettingsAction.LanguageSelected(it)) },
+                onDismiss = { onAction(SettingsAction.DialogDismissed) },
+            )
+            SettingsDialog.NightMode -> ListDialog(
+                title = stringResource(R.string.dark_theme),
+                options = listOf(
+                    DialogOption("1", stringResource(R.string.dark_theme_off)),
+                    DialogOption("2", stringResource(R.string.dark_theme_on)),
+                    DialogOption("-1", stringResource(R.string.follow_system)),
+                ),
+                selectedTag = state.nightMode.toString(),
+                onSelect = { onAction(SettingsAction.NightModeSelected(it.toInt())) },
+                onDismiss = { onAction(SettingsAction.DialogDismissed) },
+            )
+            SettingsDialog.UpdateMode -> ListDialog(
+                title = stringResource(R.string.check_for_updates),
+                options = listOf(
+                    DialogOption("0", stringResource(R.string.off)),
+                    DialogOption("1", stringResource(R.string.settings_update_stable)),
+                    DialogOption("2", stringResource(R.string.settings_update_beta)),
+                ),
+                selectedTag = state.updateMode.toString(),
+                onSelect = { onAction(SettingsAction.UpdateModeSelected(it.toInt())) },
+                onDismiss = { onAction(SettingsAction.DialogDismissed) },
+            )
+            SettingsDialog.BugReport -> BugReportDialog(onAction)
+        }
     }
 }
 
 @Composable
 private fun SectionLabel(text: String) {
-    val palette = LocalGlassPalette.current
     Text(
         text = text.uppercase(),
-        modifier = Modifier.padding(start = 6.dp),
-        style = GlassType.label,
-        color = palette.textPrimary.copy(alpha = 0.75f),
+        modifier = Modifier.padding(start = 8.dp),
+        style = MiuixTheme.textStyles.footnote1,
+        color = MiuixTheme.colorScheme.onBackgroundVariant,
+    )
+}
+
+@Composable
+private fun SettingDivider() {
+    HorizontalDivider(
+        modifier = Modifier.padding(horizontal = 4.dp),
+        color = MiuixTheme.colorScheme.dividerLine,
+    )
+}
+
+@Composable
+private fun RestartChip() {
+    val colors = MiuixTheme.colorScheme
+    Text(
+        text = stringResource(R.string.glass_settings_restart_required),
+        style = MiuixTheme.textStyles.footnote2,
+        color = colors.onSurfaceVariantSummary,
     )
 }
 
 @Composable
 private fun BehaviorCard(
-    backdrop: LayerBackdrop,
     state: SettingsUiState,
     onAction: (SettingsAction) -> Unit,
 ) {
@@ -271,18 +299,16 @@ private fun BehaviorCard(
     val currentPort = state.tcpPortValue.toIntOrNull() ?: 5555
     val tcpPortRestart = state.adbTcpPort > 0 && state.adbTcpPort != currentPort
 
-    GlassCard(backdrop, Modifier.fillMaxWidth(), contentPadding = 8.dp) {
+    MiuixGlassCard(Modifier.fillMaxWidth(), contentPadding = 14.dp) {
         SettingToggleRow(
-            backdrop = backdrop,
             title = stringResource(R.string.settings_start_on_boot),
             summary = if (state.startOnBootEnabled) null else stringResource(R.string.settings_start_on_boot_summary),
             checked = state.startOnBootChecked,
             enabled = state.startOnBootEnabled,
             onToggle = { onAction(SettingsAction.StartOnBootToggled(it)) },
         )
-        GlassDivider(Modifier.padding(horizontal = 12.dp))
+        SettingDivider()
         SettingToggleRow(
-            backdrop = backdrop,
             title = stringResource(R.string.settings_watchdog),
             summary = stringResource(R.string.settings_watchdog_summary),
             checked = state.watchdogRunning,
@@ -290,9 +316,8 @@ private fun BehaviorCard(
             onToggle = { onAction(SettingsAction.WatchdogToggled(it)) },
         )
         if (state.tcpModeVisible) {
-            GlassDivider(Modifier.padding(horizontal = 12.dp))
+            SettingDivider()
             SettingToggleRow(
-                backdrop = backdrop,
                 title = stringResource(R.string.settings_tcp_mode),
                 summary = state.tcpModeSummary,
                 checked = state.tcpModeChecked,
@@ -302,9 +327,8 @@ private fun BehaviorCard(
             )
         }
         if (state.tcpPortVisible) {
-            GlassDivider(Modifier.padding(horizontal = 12.dp))
+            SettingDivider()
             SettingValueRow(
-                backdrop = backdrop,
                 title = stringResource(R.string.settings_tcp_port),
                 summary = if (state.tcpPortValue.isEmpty()) {
                     stringResource(R.string.settings_tcp_port_default)
@@ -315,9 +339,8 @@ private fun BehaviorCard(
                 onClick = { onAction(SettingsAction.OpenTcpPort) },
             )
         }
-        GlassDivider(Modifier.padding(horizontal = 12.dp))
+        SettingDivider()
         SettingToggleRow(
-            backdrop = backdrop,
             title = stringResource(R.string.settings_auto_disable_usb_debugging),
             summary = stringResource(R.string.settings_auto_disable_usb_debugging_summary),
             checked = state.autoDisableUsbChecked,
@@ -329,28 +352,24 @@ private fun BehaviorCard(
 
 @Composable
 private fun LanguageCard(
-    backdrop: LayerBackdrop,
     state: SettingsUiState,
     onAction: (SettingsAction) -> Unit,
 ) {
-    GlassCard(backdrop, Modifier.fillMaxWidth(), contentPadding = 8.dp) {
+    MiuixGlassCard(Modifier.fillMaxWidth(), contentPadding = 14.dp) {
         SettingValueRow(
-            backdrop = backdrop,
             title = stringResource(R.string.settings_language),
             summary = state.languageSummary,
             onClick = { onAction(SettingsAction.OpenLanguage) },
         )
         if (state.translationContributors.isNotBlank()) {
-            GlassDivider(Modifier.padding(horizontal = 12.dp))
-            GlassRow(
-                backdrop = backdrop,
+            SettingDivider()
+            InfoRow(
                 title = stringResource(R.string.settings_translation_contributors),
                 summary = state.translationContributors,
             )
         }
-        GlassDivider(Modifier.padding(horizontal = 12.dp))
+        SettingDivider()
         SettingValueRow(
-            backdrop = backdrop,
             title = stringResource(R.string.settings_translation),
             summary = stringResource(R.string.settings_translation_summary, stringResource(R.string.app_name)),
             onClick = { onAction(SettingsAction.TranslationClicked) },
@@ -360,7 +379,6 @@ private fun LanguageCard(
 
 @Composable
 private fun AppearanceCard(
-    backdrop: LayerBackdrop,
     state: SettingsUiState,
     onAction: (SettingsAction) -> Unit,
 ) {
@@ -369,17 +387,15 @@ private fun AppearanceCard(
         2 -> stringResource(R.string.dark_theme_on)
         else -> stringResource(R.string.follow_system)
     }
-    GlassCard(backdrop, Modifier.fillMaxWidth(), contentPadding = 8.dp) {
+    MiuixGlassCard(Modifier.fillMaxWidth(), contentPadding = 14.dp) {
         SettingValueRow(
-            backdrop = backdrop,
             title = stringResource(R.string.dark_theme),
             summary = nightSummary,
             onClick = { onAction(SettingsAction.OpenNightMode) },
         )
         if (state.blackNightVisible) {
-            GlassDivider(Modifier.padding(horizontal = 12.dp))
+            SettingDivider()
             SettingToggleRow(
-                backdrop = backdrop,
                 title = stringResource(R.string.settings_black_night_theme),
                 summary = stringResource(R.string.settings_black_night_theme_summary),
                 checked = state.blackNightChecked,
@@ -388,9 +404,8 @@ private fun AppearanceCard(
             )
         }
         if (state.useSystemColorVisible) {
-            GlassDivider(Modifier.padding(horizontal = 12.dp))
+            SettingDivider()
             SettingToggleRow(
-                backdrop = backdrop,
                 title = stringResource(R.string.settings_use_system_color),
                 summary = null,
                 checked = state.useSystemColorChecked,
@@ -403,7 +418,6 @@ private fun AppearanceCard(
 
 @Composable
 private fun SupportCard(
-    backdrop: LayerBackdrop,
     state: SettingsUiState,
     onAction: (SettingsAction) -> Unit,
 ) {
@@ -412,23 +426,20 @@ private fun SupportCard(
         1 -> stringResource(R.string.settings_update_stable)
         else -> stringResource(R.string.settings_update_beta)
     }
-    GlassCard(backdrop, Modifier.fillMaxWidth(), contentPadding = 8.dp) {
+    MiuixGlassCard(Modifier.fillMaxWidth(), contentPadding = 14.dp) {
         SettingValueRow(
-            backdrop = backdrop,
             title = stringResource(R.string.check_for_updates),
             summary = updateSummary,
             onClick = { onAction(SettingsAction.OpenUpdateMode) },
         )
-        GlassDivider(Modifier.padding(horizontal = 12.dp))
+        SettingDivider()
         SettingValueRow(
-            backdrop = backdrop,
             title = stringResource(R.string.settings_help),
             summary = null,
             onClick = { onAction(SettingsAction.HelpClicked) },
         )
-        GlassDivider(Modifier.padding(horizontal = 12.dp))
+        SettingDivider()
         SettingValueRow(
-            backdrop = backdrop,
             title = stringResource(R.string.settings_report_bug),
             summary = null,
             onClick = { onAction(SettingsAction.ReportBugClicked) },
@@ -438,13 +449,11 @@ private fun SupportCard(
 
 @Composable
 private fun AdvancedCard(
-    backdrop: LayerBackdrop,
     state: SettingsUiState,
     onAction: (SettingsAction) -> Unit,
 ) {
-    GlassCard(backdrop, Modifier.fillMaxWidth(), contentPadding = 8.dp) {
+    MiuixGlassCard(Modifier.fillMaxWidth(), contentPadding = 14.dp) {
         SettingToggleRow(
-            backdrop = backdrop,
             title = stringResource(R.string.settings_legacy_pairing),
             summary = stringResource(R.string.settings_legacy_pairing_summary),
             checked = state.legacyPairingChecked,
@@ -456,7 +465,6 @@ private fun AdvancedCard(
 
 @Composable
 private fun SettingToggleRow(
-    backdrop: LayerBackdrop,
     title: String,
     summary: String?,
     checked: Boolean,
@@ -464,143 +472,194 @@ private fun SettingToggleRow(
     onToggle: (Boolean) -> Unit,
     restartRequired: Boolean = false,
 ) {
-    GlassRow(
-        backdrop = backdrop,
-        title = title,
-        summary = summary,
-        enabled = enabled,
-        onClick = if (enabled) {
-            { onToggle(!checked) }
-        } else {
-            null
-        },
-        trailing = {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                if (restartRequired) {
-                    GlassChip(
-                        text = stringResource(R.string.glass_settings_restart_required),
-                        backdrop = backdrop,
-                        dotColor = LocalGlassPalette.current.warning,
-                    )
-                    Spacer(Modifier.width(8.dp))
-                }
-                LiquidSwitch(
-                    checked = checked,
-                    onCheckedChange = onToggle,
-                    backdrop = backdrop,
-                    enabled = enabled,
-                )
+    val colors = MiuixTheme.colorScheme
+    val text = MiuixTheme.textStyles
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .then(if (enabled) Modifier.clickable { onToggle(!checked) } else Modifier)
+            .padding(vertical = 12.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Column(Modifier.weight(1f)) {
+            Text(
+                title,
+                style = text.body1,
+                color = if (enabled) colors.onSurface else colors.disabledOnSurface,
+            )
+            if (summary != null) {
+                Spacer(Modifier.height(2.dp))
+                Text(summary, style = text.footnote1, color = colors.onSurfaceVariantSummary, maxLines = 2)
             }
-        },
-    )
+        }
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            if (restartRequired) {
+                RestartChip()
+                Spacer(Modifier.width(8.dp))
+            }
+            Switch(
+                checked = checked,
+                onCheckedChange = onToggle,
+                enabled = enabled,
+            )
+        }
+    }
 }
 
 @Composable
 private fun SettingValueRow(
-    backdrop: LayerBackdrop,
     title: String,
     summary: String?,
     onClick: () -> Unit,
     restartRequired: Boolean = false,
 ) {
-    GlassRow(
-        backdrop = backdrop,
-        title = title,
-        summary = summary,
-        onClick = onClick,
-        trailing = {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                if (restartRequired) {
-                    GlassChip(
-                        text = stringResource(R.string.glass_settings_restart_required),
-                        backdrop = backdrop,
-                        dotColor = LocalGlassPalette.current.warning,
-                    )
-                    Spacer(Modifier.width(8.dp))
-                }
-                GlassChevron(GlassChevronDirection.End)
+    val colors = MiuixTheme.colorScheme
+    val text = MiuixTheme.textStyles
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick)
+            .padding(vertical = 12.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Column(Modifier.weight(1f)) {
+            Text(title, style = text.body1, color = colors.onSurface)
+            if (summary != null) {
+                Spacer(Modifier.height(2.dp))
+                Text(summary, style = text.footnote1, color = colors.onSurfaceVariantSummary, maxLines = 2)
             }
-        },
-    )
+        }
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            if (restartRequired) {
+                RestartChip()
+                Spacer(Modifier.width(8.dp))
+            }
+            Icon(
+                painterResource(R.drawable.ic_outline_arrow_upward_24),
+                null,
+                Modifier
+                    .size(20.dp)
+                    .rotate(90f),
+                tint = colors.onSurfaceVariantActions,
+            )
+        }
+    }
+}
+
+@Composable
+private fun InfoRow(
+    title: String,
+    summary: String,
+) {
+    val colors = MiuixTheme.colorScheme
+    val text = MiuixTheme.textStyles
+    Row(
+        Modifier
+            .fillMaxWidth()
+            .padding(vertical = 12.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Column(Modifier.weight(1f)) {
+            Text(title, style = text.body1, color = colors.onSurface)
+            Spacer(Modifier.height(2.dp))
+            Text(summary, style = text.footnote1, color = colors.onSurfaceVariantSummary)
+        }
+    }
 }
 
 @Composable
 private fun ConfirmDialog(
-    backdrop: LayerBackdrop,
     message: String,
     onConfirm: () -> Unit,
     onCancel: () -> Unit,
     title: String = stringResource(android.R.string.dialog_alert_title),
 ) {
-    GlassDialogOverlay(backdrop = backdrop, onDismiss = onCancel) {
-        GlassDialogTitle(title)
-        GlassDialogText(message)
-        GlassDialogActions(
-            backdrop = backdrop,
-            confirmText = stringResource(android.R.string.ok),
-            onConfirm = onConfirm,
-            dismissText = stringResource(android.R.string.cancel),
-            onDismiss = onCancel,
-        )
+    val text = MiuixTheme.textStyles
+    OverlayDialog(
+        show = true,
+        title = title,
+        summary = message,
+        onDismissRequest = onCancel,
+    ) {
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+            TextButton(
+                text = stringResource(android.R.string.cancel),
+                onClick = onCancel,
+                modifier = Modifier.weight(1f),
+            )
+            Button(
+                colors = ButtonDefaults.buttonColorsPrimary(),
+                onClick = onConfirm,
+                modifier = Modifier.weight(1f),
+            ) {
+                Text(stringResource(android.R.string.ok), style = text.button)
+            }
+        }
     }
 }
 
 @Composable
 private fun TcpPortDialog(
-    backdrop: LayerBackdrop,
     initial: String,
     onConfirm: (String) -> Unit,
     onCancel: () -> Unit,
 ) {
-    val palette = LocalGlassPalette.current
-    var text by remember { mutableStateOf(initial) }
-    GlassDialogOverlay(backdrop = backdrop, onDismiss = onCancel) {
-        GlassDialogTitle(stringResource(R.string.settings_tcp_port))
-        Box(
-            Modifier
-                .fillMaxWidth()
-                .liquidGlass(backdrop, RoundedCornerShape(16.dp), palette.controlTint)
-                .padding(horizontal = 16.dp, vertical = 12.dp)
-        ) {
-            if (text.isEmpty()) {
-                Text(
-                    text = stringResource(R.string.settings_tcp_port_hint),
-                    style = GlassType.body,
-                    color = palette.textTertiary,
-                )
-            }
-            BasicTextField(
-                value = text,
-                onValueChange = { text = it },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true,
-                textStyle = GlassType.body.copy(color = palette.textPrimary),
-                cursorBrush = SolidColor(palette.accent),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            )
-        }
-        GlassDialogActions(
-            backdrop = backdrop,
-            confirmText = stringResource(android.R.string.ok),
-            onConfirm = { onConfirm(text) },
-            dismissText = stringResource(android.R.string.cancel),
-            onDismiss = onCancel,
+    val colors = MiuixTheme.colorScheme
+    val text = MiuixTheme.textStyles
+    var value by remember { mutableStateOf(initial) }
+    OverlayDialog(
+        show = true,
+        onDismissRequest = onCancel,
+    ) {
+        Text(stringResource(R.string.settings_tcp_port), style = text.title4, color = colors.onSurface)
+        Spacer(Modifier.height(4.dp))
+        Text(
+            stringResource(R.string.settings_tcp_port_hint),
+            style = text.footnote1,
+            color = colors.onSurfaceVariantSummary,
         )
+        Spacer(Modifier.height(12.dp))
+        OutlinedTextField(
+            value = value,
+            onValueChange = { value = it },
+            modifier = Modifier.fillMaxWidth(),
+            singleLine = true,
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+        )
+        Spacer(Modifier.height(14.dp))
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+            TextButton(
+                text = stringResource(android.R.string.cancel),
+                onClick = onCancel,
+                modifier = Modifier.weight(1f),
+            )
+            Button(
+                colors = ButtonDefaults.buttonColorsPrimary(),
+                onClick = { onConfirm(value) },
+                modifier = Modifier.weight(1f),
+            ) {
+                Text(stringResource(android.R.string.ok), style = text.button)
+            }
+        }
     }
 }
 
 @Composable
 private fun ListDialog(
-    backdrop: LayerBackdrop,
     title: String,
     options: List<DialogOption>,
     selectedTag: String,
     onSelect: (String) -> Unit,
     onDismiss: () -> Unit,
 ) {
-    val palette = LocalGlassPalette.current
-    GlassDialogOverlay(backdrop = backdrop, onDismiss = onDismiss) {
-        GlassDialogTitle(title)
+    val colors = MiuixTheme.colorScheme
+    val text = MiuixTheme.textStyles
+    OverlayDialog(
+        show = true,
+        onDismissRequest = onDismiss,
+    ) {
+        Text(title, style = text.title4, color = colors.onSurface)
+        Spacer(Modifier.height(10.dp))
         Column(
             Modifier
                 .fillMaxWidth()
@@ -617,28 +676,28 @@ private fun ListDialog(
                 ) {
                     Column(Modifier.weight(1f)) {
                         Text(
-                            text = option.title,
-                            style = GlassType.body,
-                            color = if (selected) palette.accent else palette.textPrimary,
+                            option.title,
+                            style = text.body1,
+                            color = if (selected) colors.primary else colors.onSurface,
                         )
                         if (option.subtitle != null) {
+                            Spacer(Modifier.height(2.dp))
                             Text(
-                                text = option.subtitle,
-                                style = GlassType.caption,
-                                color = palette.textTertiary,
+                                option.subtitle,
+                                style = text.footnote1,
+                                color = colors.onSurfaceVariantSummary,
                             )
                         }
                     }
                     if (selected) {
-                        Text(
-                            text = "✓",
-                            style = GlassType.body,
-                            color = palette.accent,
-                        )
+                        Text("✓", style = text.body1, color = colors.primary)
                     }
                 }
                 if (index != options.lastIndex) {
-                    GlassDivider(Modifier.padding(horizontal = 12.dp))
+                    HorizontalDivider(
+                        modifier = Modifier.padding(horizontal = 4.dp),
+                        color = colors.dividerLine,
+                    )
                 }
             }
         }
@@ -647,16 +706,23 @@ private fun ListDialog(
 
 @Composable
 private fun BugReportDialog(
-    backdrop: LayerBackdrop,
     onAction: (SettingsAction) -> Unit,
 ) {
+    val colors = MiuixTheme.colorScheme
+    val text = MiuixTheme.textStyles
     val issuesUrl = "https://github.com/thedjchi/Shizuku/issues/new"
-    GlassDialogOverlay(
-        backdrop = backdrop,
-        onDismiss = { onAction(SettingsAction.BugReportCancel) },
+    OverlayDialog(
+        show = true,
+        onDismissRequest = { onAction(SettingsAction.BugReportCancel) },
     ) {
-        GlassDialogTitle(stringResource(R.string.settings_report_bug))
-        GlassDialogText(stringResource(R.string.bug_report_dialog_before_reporting))
+        Text(stringResource(R.string.settings_report_bug), style = text.title4, color = colors.onSurface)
+        Spacer(Modifier.height(4.dp))
+        Text(
+            stringResource(R.string.bug_report_dialog_before_reporting),
+            style = text.footnote1,
+            color = colors.onSurfaceVariantSummary,
+        )
+        Spacer(Modifier.height(8.dp))
         BugReportLinkRow(
             template = stringResource(R.string.bug_report_dialog_update),
             label = stringResource(R.string.bug_report_dialog_link_update),
@@ -681,19 +747,26 @@ private fun BugReportDialog(
             url = issuesUrl,
             onAction = onAction,
         )
-        GlassDialogActions(
-            backdrop = backdrop,
-            confirmText = "GitHub",
-            onConfirm = { onAction(SettingsAction.BugReportGitHub) },
-            dismissText = stringResource(R.string.bug_report_dialog_button_email),
-            onDismiss = { onAction(SettingsAction.BugReportEmail) },
-        )
-        GlassButton(
+        Spacer(Modifier.height(8.dp))
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+            TextButton(
+                text = stringResource(R.string.bug_report_dialog_button_email),
+                onClick = { onAction(SettingsAction.BugReportEmail) },
+                modifier = Modifier.weight(1f),
+            )
+            Button(
+                colors = ButtonDefaults.buttonColorsPrimary(),
+                onClick = { onAction(SettingsAction.BugReportGitHub) },
+                modifier = Modifier.weight(1f),
+            ) {
+                Text("GitHub", style = text.button)
+            }
+        }
+        Spacer(Modifier.height(4.dp))
+        TextButton(
             text = stringResource(android.R.string.cancel),
-            backdrop = backdrop,
             onClick = { onAction(SettingsAction.BugReportCancel) },
-            style = GlassButtonStyle.Glass,
-            fillWidth = true,
+            modifier = Modifier.fillMaxWidth(),
         )
     }
 }
@@ -705,13 +778,14 @@ private fun BugReportLinkRow(
     url: String,
     onAction: (SettingsAction) -> Unit,
 ) {
-    val palette = LocalGlassPalette.current
+    val colors = MiuixTheme.colorScheme
+    val text = MiuixTheme.textStyles
     val annotated = remember(template, label, url) {
         buildAnnotatedString {
             val index = template.indexOf("^1")
             if (index >= 0) {
                 append(template.substring(0, index))
-                withStyle(SpanStyle(color = palette.accent)) {
+                withStyle(SpanStyle(color = colors.primary)) {
                     pushStringAnnotation(tag = "URL", annotation = url)
                     append(label)
                     pop()
@@ -726,8 +800,8 @@ private fun BugReportLinkRow(
         text = annotated,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 10.dp),
-        style = GlassType.body.copy(color = palette.textSecondary),
+            .padding(vertical = 8.dp),
+        style = text.footnote1.copy(color = colors.onSurfaceVariantSummary),
         onClick = { offset ->
             annotated.getStringAnnotations(tag = "URL", start = offset, end = offset)
                 .firstOrNull()

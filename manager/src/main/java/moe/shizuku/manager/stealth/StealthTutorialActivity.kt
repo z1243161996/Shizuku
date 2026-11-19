@@ -12,13 +12,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import java.io.File
 import moe.shizuku.manager.R
-import moe.shizuku.manager.ui.glass.GlassActivity
+import moe.shizuku.manager.ui.miuix.MiuixActivity
 import moe.shizuku.manager.ui.tutorials.StealthDialog
 import moe.shizuku.manager.ui.tutorials.StealthTutorialScreen
 import moe.shizuku.manager.utils.ApkUtils.*
 import rikka.core.util.ClipboardUtils
 
-class StealthTutorialActivity : GlassActivity() {
+class StealthTutorialActivity : MiuixActivity() {
     private val viewModel: StealthTutorialViewModel by viewModels()
 
     private lateinit var outDir: Uri
@@ -61,9 +61,8 @@ class StealthTutorialActivity : GlassActivity() {
             }
         }
 
-        setGlassContent { backdrop ->
+        setMiuixContent {
             StealthTutorialScreen(
-                backdrop = backdrop,
                 state = uiState,
                 lastIdleAction = lastIdleAction,
                 dialog = dialog,

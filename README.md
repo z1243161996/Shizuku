@@ -24,14 +24,27 @@ An Android app that allows other apps to use system-level APIs that require ADB/
 
 This is a **FORK** of Shizuku. If you are looking for the original version, please visit the [RikkaApps/Shizuku](https://github.com/RikkaApps/Shizuku) repository.
 
-## 🧊 Liquid Glass theme
+## 🧊 Liquid Glass theme (miuix)
 
-This fork also ships an alternative UI skin: every manager screen is rebuilt in Jetpack Compose on top of [Kyant0's backdrop](https://github.com/Kyant0/AndroidLiquidGlass) library — blurred, refracted real-time backdrop sampled from an animated liquid wallpaper, white-tinted glass cards, hairline highlights and iOS-style accents.
+This fork ships an alternative UI skin: every manager screen is rebuilt in Jetpack Compose on top of
+[miuix](https://github.com/compose-miuix-ui/miuix) 0.9.5-beta01. Glass panels sample a hue-derived wallpaper that is
+recorded with `Modifier.layerBackdrop` and re-drawn by `Modifier.glassPanel`, so the surface refracts the actual
+background instead of faking a translucent fill; every dialog is a `miuix` `OverlayDialog`.
 
-- Screens, not a reskin of views: Home, Application management, Settings, RequestPermission, Legacy / shell-request handlers, Bug report, Shell tutorial, Stealth tutorial, ADB pairing tutorial and the starter console are all Compose screens hosted by `ui/glass/GlassActivity`.
-- Behaviour is untouched: every intent, extra, preference key, deep link, toast, notification and Shizuku binder call still comes from the original implementation. Dialogs that must stay `Dialog` windows (wireless-debugging / pairing flows) are tinted by `ui/misc/StaticGlass.kt`.
-- Build exactly like upstream — `:manager:assembleDebug`. The skin adds only Compose 1.11.1, Material3 1.5.0-alpha18 and `io.github.kyant0:backdrop:1.0.2`; the server, starter and shell modules are unmodified.
-- Source layout: `manager/src/main/java/moe/shizuku/manager/ui/glass/` (palette, wallpaper, surfaces, buttons, scaffolds), `ui/home`, `ui/management`, `ui/settings`, `ui/tutorials`, `ui/misc`.
+- Screens, not a reskin of views: Home, Application management, Settings, RequestPermission, Legacy / shell-request
+  handlers, Bug report, Shell tutorial, Stealth tutorial, ADB pairing tutorial and the starter console are Compose
+  screens hosted by `ui/miuix/MiuixActivity`. The wireless-debugging and pairing dialogs stay `DialogFragment`s
+  (their call sites and `show(fragmentManager)` contracts are untouched) but render Compose content.
+- Behaviour is untouched: every intent, extra, preference key, deep link, toast, notification and Shizuku binder call
+  is the original implementation.
+- Build: AGP 9.5.1 with built-in Kotlin opted out (`android.builtInKotlin=false`, `android.newDsl=false`) and Kotlin
+  2.4.21 applied explicitly, because miuix is compiled with Kotlin metadata 2.4. `compileSdk` is 37 with
+  `compileSdkMinor = 2`. Build exactly like upstream — `:manager:assembleDebug`; minSdk stays 24 (miuix blur falls back
+  to a flat surface below API 33).
+- Source layout: `manager/src/main/java/moe/shizuku/manager/ui/miuix/` (theme host, wallpaper, glass card, top bar),
+  `ui/home`, `ui/management`, `ui/settings`, `ui/tutorials`, `ui/misc`.
+- Docs: `docs/MIUIX-MIGRATION.md` (component mapping), `docs/SPIKE-AGP9.md` (toolchain findings),
+  `docs/MIUIX-GUIDE.md` (conventions), `docs/UI-AUDIT.md` (design audit of the reworked UI).
 
 ## ⬇️ Download
 

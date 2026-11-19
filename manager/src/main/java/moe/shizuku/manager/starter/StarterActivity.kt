@@ -27,7 +27,7 @@ import moe.shizuku.manager.AppConstants.EXTRA
 import moe.shizuku.manager.R
 import moe.shizuku.manager.adb.AdbKeyException
 import moe.shizuku.manager.adb.AdbStarter
-import moe.shizuku.manager.ui.glass.GlassActivity
+import moe.shizuku.manager.ui.miuix.MiuixActivity
 import moe.shizuku.manager.ui.tutorials.StarterScreen
 import moe.shizuku.manager.utils.ShizukuStateMachine
 import rikka.lifecycle.Resource
@@ -35,7 +35,7 @@ import rikka.lifecycle.Status
 
 private class NotRootedException : Exception()
 
-class StarterActivity : GlassActivity() {
+class StarterActivity : MiuixActivity() {
 
     private val viewModel: ViewModel by viewModels()
     private var log by mutableStateOf("")
@@ -67,9 +67,8 @@ class StarterActivity : GlassActivity() {
             log = output.toString()
         }
 
-        setGlassContent { backdrop ->
+        setMiuixContent {
             StarterScreen(
-                backdrop = backdrop,
                 log = log,
                 errorMessage = errorMessage,
                 onBack = { finish() },
