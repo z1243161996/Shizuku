@@ -5,6 +5,8 @@
 **手段**：1080×2400 模拟器实拍（Android 15 / API 35 / density 420）+ ImageMagick 像素取证 + miuix 0.9.5-beta01 源码比对
 **未覆盖**：深色主题（模拟器切换即崩溃）、教程/权限/遗留对话框页（迁移中）、RTL
 
+**落地状态**：Quick Wins 已实施（commit 8cdb88e）—— Stop 改 error 红、次级动作降为灰色按钮、正文 14→16sp、间距对齐 8pt；本文截图摄于实施前。
+
 完整版：[shizuku-ui-audit.html](./shizuku-ui-audit.html)（12 屏幻灯片，← → 翻页）
 
 ---
