@@ -6,6 +6,7 @@ plugins {
     id "com.android.application"
     id "org.jetbrains.kotlin.android"
     id "org.jetbrains.kotlin.plugin.serialization"
+    id "org.jetbrains.kotlin.plugin.compose"
     id "dev.rikka.tools.refine"
     id "dev.rikka.tools.autoresconfig"
     id "dev.rikka.tools.materialthemebuilder"
@@ -27,6 +28,7 @@ android {
         buildConfig = true
         viewBinding = true
         prefab = true
+        compose = true
     }
     signingConfigs {
         sign {}
@@ -155,6 +157,8 @@ configurations.configureEach {
 }
 
 dependencies {
+    // Liquid Glass (Kyant backdrop) UI stack
+    def composeUi = "1.11.1"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2"
 
@@ -175,6 +179,17 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.9.0"
     implementation "androidx.preference:preference-ktx:1.2.1"
     implementation "androidx.work:work-runtime-ktx:2.10.4"
+
+    implementation "androidx.compose.ui:ui:$composeUi"
+    implementation "androidx.compose.ui:ui-graphics:$composeUi"
+    implementation "androidx.compose.ui:ui-tooling-preview:$composeUi"
+    implementation "androidx.compose.foundation:foundation:$composeUi"
+    implementation "androidx.compose.material3:material3:1.5.0-alpha18"
+    implementation "androidx.activity:activity-compose:1.12.4"
+    implementation "androidx.lifecycle:lifecycle-runtime-compose:2.10.0"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-compose:2.10.0"
+    implementation "io.github.kyant0:backdrop:1.0.2"
+    debugImplementation "androidx.compose.ui:ui-tooling:$composeUi"
 
     implementation "com.android.tools.build:apksig:8.13.2"
     implementation "com.google.android.material:material:1.14.0-alpha08"

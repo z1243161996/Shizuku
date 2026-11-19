@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Liquid glass skin -->
+    <string name="glass_section_service">Service</string>
+    <string name="glass_section_quick_actions">Quick actions</string>
+    <string name="glass_section_start">Start the service</string>
+    <string name="glass_section_more">More</string>
+    <string name="glass_status_root">Root</string>
+    <string name="glass_status_adb">ADB</string>
+    <string name="glass_status_uid">UID %1$d</string>
+    <string name="glass_status_api">API %1$d</string>
+    <string name="glass_status_patch">patch %1$d</string>
+    <string name="glass_status_selinux">SELinux %1$s</string>
+    <string name="glass_stop_service">Stop the service</string>
+    <string name="glass_service_hint">Start Shizuku to let apps use the API with elevated privileges.</string>
+    <string name="glass_automation_start">START</string>
+    <string name="glass_automation_stop">STOP</string>
+    <string name="glass_action_copy">Copy</string>
+    <string name="glass_action_regenerate">Regenerate</string>
+    <string name="glass_action_close">Close</string>
+    <string name="glass_action_update">Check for updates</string>
+    <string name="glass_action_donate">Buy me a coffee</string>
+    <string name="glass_footer">Liquid Glass skin · forked from thedjchi/Shizuku</string>
+    <string name="glass_about_title">Shizuku</string>
+
+    <!-- Missing defaults in upstream (only present in translations) -->
+    <string name="action_start">Start Shizuku</string>
+    <string name="settings_tcp_learn_more">Learn more about using automation apps to control Shizuku</string>
+    <string name="home_automation_dialog_label_action">Action</string>
+    <string name="home_automation_dialog_label_class">Class</string>
+    <string name="home_automation_dialog_label_package">Package</string>
+    <string name="home_automation_dialog_label_target">Target</string>
+</resources>

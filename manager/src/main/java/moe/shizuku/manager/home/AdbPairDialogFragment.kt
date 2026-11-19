@@ -10,6 +10,7 @@ import android.os.Bundle
 import android.provider.Settings
 import android.view.Gravity
 import android.view.LayoutInflater
+import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
@@ -29,6 +30,10 @@ import moe.shizuku.manager.R
 import moe.shizuku.manager.ShizukuSettings
 import moe.shizuku.manager.adb.*
 import moe.shizuku.manager.databinding.AdbPairDialogBinding
+import moe.shizuku.manager.ui.misc.applyStaticGlass
+import moe.shizuku.manager.ui.misc.applyStaticGlassWindow
+import moe.shizuku.manager.ui.misc.staticGlassPalette
+import moe.shizuku.manager.ui.misc.styleStaticGlassAlert
 import moe.shizuku.manager.utils.SettingsHelper
 import moe.shizuku.manager.utils.SettingsPage
 import java.net.ConnectException
@@ -52,12 +57,21 @@ class AdbPairDialogFragment : DialogFragment() {
             setNeutralButton(R.string.development_settings, null)
         }
         val dialog = builder.create()
+        dialog.applyStaticGlassWindow()
         dialog.setCanceledOnTouchOutside(false)
         dialog.setOnShowListener { onDialogShow(dialog) }
         return dialog
     }
 
     private fun onDialogShow(dialog: AlertDialog) {
+        val palette = dialog.context.staticGlassPalette()
+        dialog.styleStaticGlassAlert()
+        binding.text1.setTextColor(palette.secondary)
+        (binding.text2.getChildAt(0) as? TextView)?.setTextColor(palette.primary)
+        (binding.text2.getChildAt(1) as? TextView)?.setTextColor(palette.secondary)
+        binding.pairingCode.applyStaticGlass(palette)
+        binding.port.applyStaticGlass(palette)
+
         binding.pairingCode.editText!!.doAfterTextChanged {
             binding.pairingCode.error = null
         }

@@ -9,8 +9,11 @@ import android.text.Spannable
 import android.text.SpannableString
 import android.text.TextUtils
 import android.text.style.TypefaceSpan
+import androidx.appcompat.app.AlertDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import moe.shizuku.manager.R
+import moe.shizuku.manager.ui.misc.applyStaticGlassAlertStyle
+import moe.shizuku.manager.ui.misc.applyStaticGlassWindow
 import moe.shizuku.manager.adb.AdbPairingAccessibilityService
 import moe.shizuku.manager.utils.SettingsHelper
 import moe.shizuku.manager.utils.SettingsPage
@@ -34,6 +37,13 @@ fun Context.showAccessibilityDialog() {
     }
 }
 
+private fun MaterialAlertDialogBuilder.showStaticGlass(): AlertDialog {
+    return create().apply {
+        applyStaticGlassWindow()
+        applyStaticGlassAlertStyle()
+    }.also { it.show() }
+}
+
 private fun Context.showPermissionDialog() {
     val permissionName = "ACCESS_RESTRICTED_SETTINGS"
     val permissionCommand = "adb shell cmd appops set $packageName $permissionName allow"
@@ -52,7 +62,7 @@ private fun Context.showPermissionDialog() {
             ),
         ).setPositiveButton("Continue") { _, _ -> showEnableDialog() }
         .setNegativeButton(android.R.string.cancel, null)
-        .show()
+        .showStaticGlass()
 }
 
 private fun Context.showEnableDialog() {
@@ -62,7 +72,7 @@ private fun Context.showEnableDialog() {
         .setPositiveButton(R.string.enable) { _, _ ->
             SettingsPage.Accessibility.launch(this)
         }.setNegativeButton(android.R.string.cancel, null)
-        .show()
+        .showStaticGlass()
 }
 
 private fun Context.showNavigateDialog() {
@@ -72,7 +82,7 @@ private fun Context.showNavigateDialog() {
         .setPositiveButton(R.string.development_settings) { _, _ ->
             SettingsPage.Developer.HighlightWirelessDebugging.launch(this)
         }.setNegativeButton(android.R.string.cancel, null)
-        .show()
+        .showStaticGlass()
 }
 
 private fun Context.getEnabledAccessibilityServices(): List<String>? {

@@ -24,6 +24,15 @@ An Android app that allows other apps to use system-level APIs that require ADB/
 
 This is a **FORK** of Shizuku. If you are looking for the original version, please visit the [RikkaApps/Shizuku](https://github.com/RikkaApps/Shizuku) repository.
 
+## 🧊 Liquid Glass theme
+
+This fork also ships an alternative UI skin: every manager screen is rebuilt in Jetpack Compose on top of [Kyant0's backdrop](https://github.com/Kyant0/AndroidLiquidGlass) library — blurred, refracted real-time backdrop sampled from an animated liquid wallpaper, white-tinted glass cards, hairline highlights and iOS-style accents.
+
+- Screens, not a reskin of views: Home, Application management, Settings, RequestPermission, Legacy / shell-request handlers, Bug report, Shell tutorial, Stealth tutorial, ADB pairing tutorial and the starter console are all Compose screens hosted by `ui/glass/GlassActivity`.
+- Behaviour is untouched: every intent, extra, preference key, deep link, toast, notification and Shizuku binder call still comes from the original implementation. Dialogs that must stay `Dialog` windows (wireless-debugging / pairing flows) are tinted by `ui/misc/StaticGlass.kt`.
+- Build exactly like upstream — `:manager:assembleDebug`. The skin adds only Compose 1.11.1, Material3 1.5.0-alpha18 and `io.github.kyant0:backdrop:1.0.2`; the server, starter and shell modules are unmodified.
+- Source layout: `manager/src/main/java/moe/shizuku/manager/ui/glass/` (palette, wallpaper, surfaces, buttons, scaffolds), `ui/home`, `ui/management`, `ui/settings`, `ui/tutorials`, `ui/misc`.
+
 ## ⬇️ Download
 
 Get the latest [stable](https://github.com/thedjchi/Shizuku/releases/latest) or [beta](https://github.com/thedjchi/Shizuku/releases) version.

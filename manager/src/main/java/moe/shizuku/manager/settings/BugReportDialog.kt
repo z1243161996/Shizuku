@@ -17,6 +17,10 @@ import moe.shizuku.manager.R
 import moe.shizuku.manager.databinding.BugReportDialogBinding
 import moe.shizuku.manager.ktx.asLink
 import moe.shizuku.manager.ktx.applyTemplateArgs
+import moe.shizuku.manager.ui.misc.applyStaticGlassWindow
+import moe.shizuku.manager.ui.misc.staticGlassPalette
+import moe.shizuku.manager.ui.misc.styleStaticGlassAlert
+import moe.shizuku.manager.ui.misc.tintGlassTexts
 import moe.shizuku.manager.utils.CustomTabsHelper
 import moe.shizuku.manager.worker.AdbStartWorker
 
@@ -75,6 +79,13 @@ class BugReportDialog : DialogFragment() {
                 dialog.cancel()
             }
             .create()
+            .also { dialog ->
+                dialog.applyStaticGlassWindow()
+                dialog.setOnShowListener {
+                    (it as Dialog).styleStaticGlassAlert()
+                    binding.root.tintGlassTexts(context.staticGlassPalette())
+                }
+            }
     }
 
     override fun onCancel(dialog: DialogInterface) {

@@ -4,78 +4,54 @@ import android.Manifest
 import android.app.AppOpsManager
 import android.app.ForegroundServiceStartNotAllowedException
 import android.app.NotificationManager
-import android.content.ActivityNotFoundException
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import android.provider.Settings
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
-import androidx.core.view.isGone
-import androidx.core.view.isVisible
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import moe.shizuku.manager.AppConstants
-import moe.shizuku.manager.app.AppBarActivity
-import moe.shizuku.manager.databinding.AdbPairingTutorialActivityBinding
+import moe.shizuku.manager.ui.glass.GlassActivity
+import moe.shizuku.manager.ui.tutorials.AdbPairingTutorialScreen
 import moe.shizuku.manager.utils.SettingsHelper
 import moe.shizuku.manager.utils.SettingsPage
 import rikka.compatibility.DeviceCompatibility
 
 @RequiresApi(Build.VERSION_CODES.R)
-class AdbPairingTutorialActivity : AppBarActivity() {
+class AdbPairingTutorialActivity : GlassActivity() {
 
-    private lateinit var binding: AdbPairingTutorialActivityBinding
-
-    private var notificationEnabled: Boolean = false
+    private var notificationEnabled by mutableStateOf(false)
+    private var isMiui by mutableStateOf(false)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val context = this
 
-        binding = AdbPairingTutorialActivityBinding.inflate(layoutInflater, rootView, true)
-        
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
+        isMiui = DeviceCompatibility.isMiui()
         notificationEnabled = isNotificationEnabled()
 
         if (notificationEnabled) {
             startPairingService()
         }
 
-        binding.apply {
-            syncNotificationEnabled()
-
-            if (DeviceCompatibility.isMiui()) {
-                miui.isVisible = true
-            }
-
-            developerOptions.setOnClickListener {
-                SettingsHelper.launchOrHighlightWirelessDebugging(context)
-            }
-
-            notificationOptions.setOnClickListener {
-                SettingsPage.Notifications.NotificationSettings.launch(context)
-            }
-        }
-    }
-
-    private fun syncNotificationEnabled() {
-        binding.apply {
-            step1.isVisible = notificationEnabled
-            step2.isVisible = notificationEnabled
-            step3.isVisible = notificationEnabled
-            network.isVisible = notificationEnabled
-            notification.isVisible = notificationEnabled
-            notificationDisabled.isGone = notificationEnabled
+        setGlassContent { backdrop ->
+            AdbPairingTutorialScreen(
+                backdrop = backdrop,
+                notificationEnabled = notificationEnabled,
+                isMiui = isMiui,
+                onBack = { finish() },
+                onDeveloperOptions = { SettingsHelper.launchOrHighlightWirelessDebugging(context) },
+                onNotificationOptions = { SettingsPage.Notifications.NotificationSettings.launch(context) },
+            )
         }
     }
 
     private fun isNotificationEnabled(): Boolean {
-        val context = this
-
-        val nm = context.getSystemService(NotificationManager::class.java)
+        val nm = getSystemService(NotificationManager::class.java)
         val channel = nm.getNotificationChannel(AdbPairingService.NOTIFICATION_CHANNEL)
         return nm.areNotificationsEnabled() &&
                 (channel == null || channel.importance != NotificationManager.IMPORTANCE_NONE)
@@ -87,7 +63,6 @@ class AdbPairingTutorialActivity : AppBarActivity() {
         val newNotificationEnabled = isNotificationEnabled()
         if (newNotificationEnabled != notificationEnabled) {
             notificationEnabled = newNotificationEnabled
-            syncNotificationEnabled()
 
             if (newNotificationEnabled) {
                 startPairingService()

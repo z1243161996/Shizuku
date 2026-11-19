@@ -4,11 +4,13 @@ import android.app.Application
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.viewModels
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.topjohnwu.superuser.CallbackList
 import com.topjohnwu.superuser.Shell
 import java.net.ConnectException
@@ -16,7 +18,6 @@ import java.net.SocketTimeoutException
 import javax.net.ssl.SSLProtocolException
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
-import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -26,60 +27,54 @@ import moe.shizuku.manager.AppConstants.EXTRA
 import moe.shizuku.manager.R
 import moe.shizuku.manager.adb.AdbKeyException
 import moe.shizuku.manager.adb.AdbStarter
-import moe.shizuku.manager.app.AppBarActivity
+import moe.shizuku.manager.ui.glass.GlassActivity
+import moe.shizuku.manager.ui.tutorials.StarterScreen
 import moe.shizuku.manager.utils.ShizukuStateMachine
-import moe.shizuku.manager.databinding.StarterActivityBinding
 import rikka.lifecycle.Resource
 import rikka.lifecycle.Status
 
-private class NotRootedException: Exception()
+private class NotRootedException : Exception()
 
-class StarterActivity : AppBarActivity() {
+class StarterActivity : GlassActivity() {
 
     private val viewModel: ViewModel by viewModels()
+    private var log by mutableStateOf("")
+    private var errorMessage by mutableStateOf<String?>(null)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_close_24)
-
-        val binding = StarterActivityBinding.inflate(layoutInflater, rootView, true)
-
         viewModel.output.observe(this) {
             val output = it.data!!.trim()
             if (output.endsWith(Starter.serviceStartedMessage)) {
-                window?.decorView?.postDelayed({
+                window.decorView.postDelayed({
                     if (!isFinishing) finish()
                 }, 3000)
             } else if (it.status == Status.ERROR) {
                 var message = 0
                 when (it.error) {
-                    is AdbKeyException -> {
-                        message = R.string.adb_error_key_store
-                    }
-                    is NotRootedException -> {
-                        message = R.string.start_with_root_failed
-                    }
-                    is SocketTimeoutException -> {
-                        message = R.string.cannot_connect_port
-                    }
-                    is ConnectException -> {
-                        message = R.string.cannot_connect_port
-                    }
-                    is SSLProtocolException -> {
-                        message = R.string.adb_pair_required
-                    }
+                    is AdbKeyException -> message = R.string.adb_error_key_store
+                    is NotRootedException -> message = R.string.start_with_root_failed
+                    is SocketTimeoutException -> message = R.string.cannot_connect_port
+                    is ConnectException -> message = R.string.cannot_connect_port
+                    is SSLProtocolException -> message = R.string.adb_pair_required
                 }
 
                 if (message != 0) {
-                    MaterialAlertDialogBuilder(this)
-                        .setMessage(message)
-                        .setPositiveButton(android.R.string.ok, null)
-                        .show()
+                    errorMessage = getString(message)
                 }
             }
-            binding.text1.text = output
+            log = output.toString()
+        }
+
+        setGlassContent { backdrop ->
+            StarterScreen(
+                backdrop = backdrop,
+                log = log,
+                errorMessage = errorMessage,
+                onBack = { finish() },
+                onDismissError = { errorMessage = null },
+            )
         }
     }
 
@@ -97,7 +92,6 @@ class StarterActivity : AppBarActivity() {
     }
 
     companion object {
-
         const val EXTRA_IS_ROOT = "$EXTRA.IS_ROOT"
         const val EXTRA_PORT = "$EXTRA.PORT"
     }
@@ -168,5 +162,4 @@ class ViewModel(application: Application) : AndroidViewModel(application) {
             }
         }
     }
-    
 }

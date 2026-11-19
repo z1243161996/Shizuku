@@ -5,6 +5,7 @@ import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.text.method.LinkMovementMethod
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -17,6 +18,9 @@ import moe.shizuku.manager.R
 import moe.shizuku.manager.app.AppActivity
 import moe.shizuku.manager.databinding.ConfirmationDialogBinding
 import moe.shizuku.manager.ktx.toHtml
+import moe.shizuku.manager.ui.misc.applyStaticGlassWindow
+import moe.shizuku.manager.ui.misc.staticGlassPalette
+import moe.shizuku.manager.ui.misc.styleStaticGlassAlert
 import moe.shizuku.manager.utils.Logger.LOGGER
 import moe.shizuku.manager.utils.ShizukuStateMachine
 import rikka.core.res.resolveColor
@@ -54,8 +58,12 @@ class RequestPermissionActivity : AppActivity() {
                 .setPositiveButton(android.R.string.ok, null)
                 .setOnDismissListener { finish() }
                 .create()
+        dialog.applyStaticGlassWindow()
         dialog.setOnShowListener {
-            (it as AlertDialog).findViewById<TextView>(android.R.id.message)?.movementMethod = LinkMovementMethod.getInstance()
+            (it as AlertDialog).apply {
+                findViewById<TextView>(android.R.id.message)?.movementMethod = LinkMovementMethod.getInstance()
+                styleStaticGlassAlert()
+            }
         }
         try {
             dialog.show()
@@ -105,6 +113,7 @@ class RequestPermissionActivity : AppActivity() {
             ai.packageName
         }
 
+        val palette = staticGlassPalette()
         val binding = ConfirmationDialogBinding.inflate(layoutInflater).apply {
             button1.setOnClickListener {
                 setResult(uid, pid, requestCode, allowed = true, onetime = false)
@@ -116,6 +125,10 @@ class RequestPermissionActivity : AppActivity() {
             }
             title.text = HtmlCompat.fromHtml(getString(R.string.permission_warning_template,
                     label, getString(R.string.permission_group_description)))
+            title.setTextColor(palette.primary)
+            button1.setTextColor(palette.accent)
+            button3.setTextColor(palette.danger)
+            (root.getChildAt(0) as? ImageView)?.setColorFilter(palette.primary)
         }
 
         dialog = MaterialAlertDialogBuilder(this)
@@ -123,6 +136,7 @@ class RequestPermissionActivity : AppActivity() {
                 .setCancelable(false)
                 .setOnDismissListener { finish() }
                 .create()
+        dialog.applyStaticGlassWindow()
         dialog.setCanceledOnTouchOutside(false)
         dialog.show()
     }

@@ -6,6 +6,8 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import moe.shizuku.manager.R
+import moe.shizuku.manager.ui.misc.applyStaticGlassAlertStyle
+import moe.shizuku.manager.ui.misc.applyStaticGlassWindow
 
 class WadbNotEnabledDialogFragment :DialogFragment() {
 
@@ -15,6 +17,10 @@ class WadbNotEnabledDialogFragment :DialogFragment() {
                 .setMessage(R.string.dialog_wireless_adb_not_enabled)
                 .setPositiveButton(android.R.string.ok, null)
                 .create()
+                .apply {
+                    applyStaticGlassWindow()
+                    applyStaticGlassAlertStyle()
+                }
     }
 
     fun show(fragmentManager: FragmentManager) {

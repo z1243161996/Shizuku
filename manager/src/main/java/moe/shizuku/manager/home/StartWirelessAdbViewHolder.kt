@@ -49,6 +49,20 @@ class StartWirelessAdbViewHolder(binding: HomeStartWirelessAdbBinding, root: Vie
             }
         }
 
+        @RequiresApi(Build.VERSION_CODES.R)
+        fun pair(context: Context) {
+            if (EnvironmentUtils.isTelevision()) {
+                context.showAccessibilityDialog()
+            } else if ((context.display?.displayId ?: -1) > 0 || ShizukuSettings.getLegacyPairing()) {
+                // Running in a multi-display environment (e.g., Windows Subsystem for Android),
+                // pairing dialog can be displayed simultaneously with Shizuku.
+                // Input from notification is harder to use under this situation.
+                AdbPairDialogFragment().show(context.asActivity<FragmentActivity>().supportFragmentManager)
+            } else {
+                context.startActivity(Intent(context, AdbPairingTutorialActivity::class.java))
+            }
+        }
+
         fun start (context: Context, scope: CoroutineScope) {
             if (ShizukuStateMachine.get() == ShizukuStateMachine.State.STARTING) {
                 Toast.makeText(context, context.getString(R.string.toast_shizuku_already_starting), Toast.LENGTH_SHORT).show()
@@ -122,16 +136,5 @@ class StartWirelessAdbViewHolder(binding: HomeStartWirelessAdbBinding, root: Vie
     }
 
     @RequiresApi(Build.VERSION_CODES.R)
-    private fun onPairClicked(context: Context) {
-        if (EnvironmentUtils.isTelevision()) {
-            context.showAccessibilityDialog()
-        } else if ((context.display?.displayId ?: -1) > 0 || ShizukuSettings.getLegacyPairing()) {
-            // Running in a multi-display environment (e.g., Windows Subsystem for Android),
-            // pairing dialog can be displayed simultaneously with Shizuku.
-            // Input from notification is harder to use under this situation.
-            AdbPairDialogFragment().show(context.asActivity<FragmentActivity>().supportFragmentManager)
-        } else {
-            context.startActivity(Intent(context, AdbPairingTutorialActivity::class.java))
-        }
-    }
+    private fun onPairClicked(context: Context) = pair(context)
 }

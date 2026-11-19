@@ -10,6 +10,8 @@ import androidx.fragment.app.FragmentManager
 import android.provider.Settings
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import moe.shizuku.manager.R
+import moe.shizuku.manager.ui.misc.applyStaticGlassWindow
+import moe.shizuku.manager.ui.misc.styleStaticGlassAlert
 import moe.shizuku.manager.utils.SettingsPage
 
 class WadbEnableUsbDebuggingDialogFragment :DialogFragment() {
@@ -22,11 +24,13 @@ class WadbEnableUsbDebuggingDialogFragment :DialogFragment() {
                 .setNegativeButton(android.R.string.cancel, null)
                 .create()
 
+        dialog.applyStaticGlassWindow()
         dialog.setOnShowListener { onDialogShow(dialog) }
         return dialog
     }
 
     private fun onDialogShow(dialog: AlertDialog) {
+        dialog.styleStaticGlassAlert()
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
             dismissAllowingStateLoss()
             SettingsPage.Developer.HighlightUsbDebugging.launch(it.context)

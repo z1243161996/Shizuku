@@ -19,6 +19,10 @@ import moe.shizuku.manager.R
 import moe.shizuku.manager.adb.AdbMdns
 import moe.shizuku.manager.databinding.AdbDialogBinding
 import moe.shizuku.manager.starter.StarterActivity
+import moe.shizuku.manager.ui.misc.applyStaticGlassWindow
+import moe.shizuku.manager.ui.misc.staticGlassPalette
+import moe.shizuku.manager.ui.misc.styleStaticGlassAlert
+import moe.shizuku.manager.ui.misc.tintGlassTexts
 import moe.shizuku.manager.utils.EnvironmentUtils
 import moe.shizuku.manager.utils.SettingsPage
 
@@ -43,6 +47,7 @@ class AdbDialogFragment : DialogFragment() {
             setPositiveButton(R.string.development_settings, null)
         }
         val dialog = builder.create()
+        dialog.applyStaticGlassWindow()
         dialog.setCanceledOnTouchOutside(false)
         dialog.setOnShowListener { onDialogShow(dialog) }
         return dialog
@@ -56,6 +61,8 @@ class AdbDialogFragment : DialogFragment() {
     private fun onDialogShow(dialog: AlertDialog) {
         adbMdns.start()
         val context = dialog.context
+        dialog.styleStaticGlassAlert()
+        binding.root.tintGlassTexts(context.staticGlassPalette())
         if (context.checkSelfPermission(WRITE_SECURE_SETTINGS) == PackageManager.PERMISSION_GRANTED)
             Settings.Global.putInt(context.contentResolver, "adb_wifi_enabled", 1)
 

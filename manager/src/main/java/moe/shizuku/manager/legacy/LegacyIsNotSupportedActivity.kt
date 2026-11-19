@@ -9,6 +9,8 @@ import moe.shizuku.manager.MainActivity
 import moe.shizuku.manager.R
 import moe.shizuku.manager.app.AppActivity
 import moe.shizuku.manager.ktx.toHtml
+import moe.shizuku.manager.ui.misc.applyStaticGlassAlertStyle
+import moe.shizuku.manager.ui.misc.applyStaticGlassWindow
 import rikka.html.text.HtmlCompat
 
 class LegacyIsNotSupportedActivity : AppActivity() {
@@ -64,6 +66,11 @@ class LegacyIsNotSupportedActivity : AppActivity() {
                         finish()
                     }
                     .setCancelable(false)
+                    .create()
+                    .apply {
+                        applyStaticGlassWindow()
+                        applyStaticGlassAlertStyle()
+                    }
                     .show()
         } else {
             MaterialAlertDialogBuilder(this)
@@ -75,6 +82,11 @@ class LegacyIsNotSupportedActivity : AppActivity() {
                         finish()
                     }
                     .setCancelable(false)
+                    .create()
+                    .apply {
+                        applyStaticGlassWindow()
+                        applyStaticGlassAlertStyle()
+                    }
                     .show()
         }
     }
