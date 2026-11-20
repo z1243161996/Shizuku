@@ -468,7 +468,9 @@ public class ShizukuService extends Service<ShizukuUserServiceManager, ShizukuCl
                 int flags = 0;
                 ShizukuConfig.PackageEntry entry = configManager.find(uid);
                 if (entry != null) {
-                    if (entry.packages != null && !entry.packages.contains(pi.packageName))
+                    // an empty list means the entry was created by updateFlagsForUid (no
+                    // package names recorded), so it must not hide every package of the uid
+                    if (entry.packages != null && !entry.packages.isEmpty() && !entry.packages.contains(pi.packageName))
                         continue;
                     flags = entry.flags & ConfigManager.MASK_PERMISSION;
                 }
