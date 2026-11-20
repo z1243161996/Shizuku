@@ -268,7 +268,7 @@ private fun SectionLabel(text: String) {
         text = text.uppercase(),
         modifier = Modifier.padding(start = 8.dp),
         style = MiuixTheme.textStyles.footnote1,
-        color = MiuixTheme.colorScheme.onBackgroundVariant,
+        color = MiuixTheme.colorScheme.onBackground,
     )
 }
 

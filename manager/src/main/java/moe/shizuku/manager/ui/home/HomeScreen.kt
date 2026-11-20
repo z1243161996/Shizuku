@@ -200,7 +200,7 @@ fun HomeScreen(
                 stringResource(R.string.glass_footer),
                 modifier = Modifier.padding(horizontal = 6.dp, vertical = 4.dp),
                 style = text.footnote1,
-                color = colors.onBackgroundVariant,
+                color = colors.onBackground.copy(alpha = 0.8f),
             )
             Spacer(Modifier.height(12.dp))
         }
@@ -302,7 +302,7 @@ private fun SectionLabel(text: String) {
         text.uppercase(),
         modifier = Modifier.padding(start = 8.dp),
         style = MiuixTheme.textStyles.footnote1,
-        color = MiuixTheme.colorScheme.onBackgroundVariant,
+        color = MiuixTheme.colorScheme.onBackground,
     )
 }
 

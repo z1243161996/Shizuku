@@ -76,9 +76,9 @@ fun MiuixWallpaper() {
             )
         } else {
             listOf(
-                Color.hsv(hue, 0.38f, 1f),
-                Color.hsv(hue, 0.12f, 1f),
-                Color.hsv((hue - 35f + 360f) % 360f, 0.30f, 1f),
+                Color.hsv(hue, 0.24f, 1f),
+                Color.hsv(hue, 0.09f, 1f),
+                Color.hsv((hue - 35f + 360f) % 360f, 0.20f, 1f),
             )
         }
     }
@@ -86,10 +86,10 @@ fun MiuixWallpaper() {
         if (dark) Color.hsv((hue + 20f) % 360f, 0.55f, 0.40f) else Color.hsv((hue + 15f) % 360f, 0.45f, 1f)
     }
     val accentBlob = remember(hue, dark) {
-        if (dark) Color.hsv((hue + 55f) % 360f, 0.50f, 0.45f) else Color.hsv((hue + 55f) % 360f, 0.35f, 1f)
+        if (dark) Color.hsv((hue + 55f) % 360f, 0.50f, 0.45f) else Color.hsv((hue + 55f) % 360f, 0.26f, 1f)
     }
     val softBlob = remember(hue, dark) {
-        if (dark) Color.hsv((hue + 300f) % 360f, 0.45f, 0.40f) else Color.hsv((hue + 300f) % 360f, 0.30f, 1f)
+        if (dark) Color.hsv((hue + 300f) % 360f, 0.45f, 0.40f) else Color.hsv((hue + 300f) % 360f, 0.22f, 1f)
     }
     Box(
         Modifier
@@ -104,21 +104,21 @@ fun MiuixWallpaper() {
                 )
                 drawRect(
                     Brush.radialGradient(
-                        colors = listOf(glow.copy(alpha = if (dark) 0.5f else 0.75f), Color.Transparent),
+                        colors = listOf(glow.copy(alpha = if (dark) 0.5f else 0.55f), Color.Transparent),
                         center = Offset(size.width * 0.10f, size.height * 0.06f),
                         radius = size.width * 0.95f,
                     )
                 )
                 drawRect(
                     Brush.radialGradient(
-                        colors = listOf(accentBlob.copy(alpha = if (dark) 0.35f else 0.55f), Color.Transparent),
+                        colors = listOf(accentBlob.copy(alpha = if (dark) 0.35f else 0.40f), Color.Transparent),
                         center = Offset(size.width * 0.92f, size.height * 0.42f),
                         radius = size.width * 0.75f,
                     )
                 )
                 drawRect(
                     Brush.radialGradient(
-                        colors = listOf(softBlob.copy(alpha = if (dark) 0.30f else 0.45f), Color.Transparent),
+                        colors = listOf(softBlob.copy(alpha = if (dark) 0.30f else 0.34f), Color.Transparent),
                         center = Offset(size.width * 0.25f, size.height * 0.88f),
                         radius = size.width * 0.85f,
                     )
