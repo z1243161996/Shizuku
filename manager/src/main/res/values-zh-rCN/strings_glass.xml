@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Liquid Glass skin -->
+    <string name="glass_section_service">服务</string>
+    <string name="glass_section_quick_actions">快捷动作</string>
+    <string name="glass_section_start">启动服务</string>
+    <string name="glass_section_more">更多</string>
+    <string name="glass_status_root">Root</string>
+    <string name="glass_status_adb">ADB</string>
+    <string name="glass_status_uid">UID %1$d</string>
+    <string name="glass_status_api">API %1$d</string>
+    <string name="glass_status_patch">补丁 %1$d</string>
+    <string name="glass_status_selinux">SELinux %1$s</string>
+    <string name="glass_stop_service">停止服务</string>
+    <string name="glass_service_hint">启动 Shizuku，让应用使用具有更高权限的 API。</string>
+    <string name="glass_automation_start">启动</string>
+    <string name="glass_automation_stop">停止</string>
+    <string name="glass_action_copy">复制</string>
+    <string name="glass_action_regenerate">重新生成</string>
+    <string name="glass_action_close">关闭</string>
+    <string name="glass_action_update">检查更新</string>
+    <string name="glass_action_donate">请我喝杯咖啡</string>
+    <string name="glass_footer">Miuix 主题 · 派生自 thedjchi/Shizuku</string>
+    <string name="glass_about_title">Shizuku</string>
+</resources>

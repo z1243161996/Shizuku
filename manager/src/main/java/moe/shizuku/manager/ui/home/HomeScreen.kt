@@ -36,6 +36,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import moe.shizuku.manager.Helps
 import moe.shizuku.manager.R
@@ -244,8 +245,8 @@ fun HomeScreen(
                 )
                 Button(
                     colors = ButtonDefaults.buttonColors(
-                        color = colors.error,
-                        contentColor = colors.onError,
+                        color = colors.surfaceVariant,
+                        contentColor = colors.error,
                     ),
                     onClick = {
                         dialog = HomeDialog.None
@@ -371,10 +372,19 @@ private fun StatusCard(status: ServiceStatus?, onStop: () -> Unit) {
                 if (status.patchVersion > 0) {
                     StatusPill(stringResource(R.string.glass_status_patch, status.patchVersion), null)
                 }
-                status.seContext?.takeIf { it.isNotBlank() }?.let { StatusPill(it, null) }
+            }
+            status.seContext?.takeIf { it.isNotBlank() }?.let { se ->
+                Spacer(Modifier.height(8.dp))
+                Text(
+                    se,
+                    style = text.footnote2,
+                    color = colors.onSurfaceVariantSummary,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
             }
             Spacer(Modifier.height(16.dp))
-            Button(onClick = onStop, modifier = Modifier.fillMaxWidth(), colors = ButtonDefaults.buttonColors(color = colors.error, contentColor = colors.onError)) {
+            Button(onClick = onStop, modifier = Modifier.fillMaxWidth(), colors = ButtonDefaults.buttonColors(color = colors.surfaceVariant, contentColor = colors.error)) {
                 Text(stringResource(R.string.glass_stop_service), style = text.button)
             }
         }

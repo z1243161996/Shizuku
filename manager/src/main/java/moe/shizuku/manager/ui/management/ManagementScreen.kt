@@ -66,6 +66,7 @@ import top.yukonga.miuix.kmp.basic.Scaffold
 import moe.shizuku.manager.ui.miuix.MiuixTopBar
 import top.yukonga.miuix.kmp.basic.Switch
 import top.yukonga.miuix.kmp.basic.Text
+import top.yukonga.miuix.kmp.basic.TextButton
 import top.yukonga.miuix.kmp.overlay.OverlayDialog
 import top.yukonga.miuix.kmp.theme.MiuixTheme
 
@@ -154,7 +155,7 @@ fun ManagementScreen(
                 if (state.value.loaded && state.value.apps.isEmpty()) {
                     item(key = "empty") {
                         MiuixGlassCard(modifier = Modifier.fillParentMaxSize()) {
-                            EmptyState(Modifier.fillMaxSize())
+                            EmptyState(Modifier.fillMaxSize(), onHelp)
                         }
                     }
                 } else if (state.value.loaded) {
@@ -329,7 +330,7 @@ private fun AppIcon(pi: PackageInfo) {
 }
 
 @Composable
-private fun EmptyState(modifier: Modifier = Modifier) {
+private fun EmptyState(modifier: Modifier = Modifier, onHelp: () -> Unit) {
     val colors = MiuixTheme.colorScheme
     val text = MiuixTheme.textStyles
     Column(
@@ -350,6 +351,12 @@ private fun EmptyState(modifier: Modifier = Modifier) {
             color = colors.onSurfaceVariantSummary,
             textAlign = TextAlign.Center,
             modifier = Modifier.padding(horizontal = 24.dp),
+        )
+        Spacer(Modifier.height(16.dp))
+        TextButton(
+            text = stringResource(R.string.home_adb_button_view_help),
+            onClick = onHelp,
+            textStyle = text.button,
         )
     }
 }

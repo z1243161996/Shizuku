@@ -20,7 +20,7 @@
     <string name="glass_action_close">Close</string>
     <string name="glass_action_update">Check for updates</string>
     <string name="glass_action_donate">Buy me a coffee</string>
-    <string name="glass_footer">Liquid Glass skin · forked from thedjchi/Shizuku</string>
+    <string name="glass_footer">Miuix theme · forked from thedjchi/Shizuku</string>
     <string name="glass_about_title">Shizuku</string>
 
     <!-- Missing defaults in upstream (only present in translations) -->

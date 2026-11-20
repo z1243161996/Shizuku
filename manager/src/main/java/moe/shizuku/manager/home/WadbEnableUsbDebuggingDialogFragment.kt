@@ -33,6 +33,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
+import moe.shizuku.manager.ui.miuix.rememberShizukuThemeController
 import moe.shizuku.manager.R
 import moe.shizuku.manager.app.ThemeHelper
 import moe.shizuku.manager.utils.SettingsPage
@@ -40,9 +41,7 @@ import top.yukonga.miuix.kmp.basic.Button
 import top.yukonga.miuix.kmp.basic.ButtonDefaults
 import top.yukonga.miuix.kmp.basic.Text
 import top.yukonga.miuix.kmp.basic.TextButton
-import top.yukonga.miuix.kmp.theme.ColorSchemeMode
 import top.yukonga.miuix.kmp.theme.MiuixTheme
-import top.yukonga.miuix.kmp.theme.ThemeController
 
 class WadbEnableUsbDebuggingDialogFragment : DialogFragment() {
 
@@ -96,12 +95,7 @@ private fun DialogFragment.createGlassDialog(content: @Composable () -> Unit): D
         ComposeView(context).apply {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnDetachedFromWindowOrReleasedFromPool)
             setContent {
-                val controller = remember {
-                    ThemeController(
-                        colorSchemeMode = ColorSchemeMode.MonetSystem,
-                        keyColor = if (ThemeHelper.isUsingSystemColor()) null else ComposeColor(0xFF3F51B5),
-                    )
-                }
+                val controller = rememberShizukuThemeController()
                 MiuixTheme(controller = controller) {
                     content()
                 }

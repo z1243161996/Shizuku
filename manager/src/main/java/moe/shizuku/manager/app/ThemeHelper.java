@@ -24,7 +24,7 @@ public class ThemeHelper {
 
     public static boolean isUsingSystemColor() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
-                && ShizukuSettings.getPreferences().getBoolean(ShizukuSettings.Keys.KEY_USE_SYSTEM_COLOR, true);
+                && ShizukuSettings.getPreferences().getBoolean(ShizukuSettings.Keys.KEY_USE_SYSTEM_COLOR, false);
     }
 
     public static String getTheme(Context context) {
